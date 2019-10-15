@@ -35,9 +35,6 @@ using namespace dds::core::xtypes;
         } \
     }
 
-
-
-
 /********************************
  *        DynamicType Tests        *
  ********************************/
@@ -452,19 +449,19 @@ TEST (DynamicData, cp)
 }
 
 
-DynamicData create_dynamic_data(long double pi, StructType& the_struct/*, StructType& inner_struct, StructType& second_inner_struct*/)
+DynamicData create_dynamic_data(long double pi, StructType& the_struct, StructType& inner_struct, StructType& second_inner_struct)
 {
-    StructType inner_struct("inner_struct") ;
-    StructType second_inner_struct("second_inner_struct");
+//    StructType inner_struct("inner_struct") ;
+//    StructType second_inner_struct("second_inner_struct");
     second_inner_struct.add_member(
         Member("second_inner_string", StringType())).add_member(
         Member("second_inner_uint32_t", primitive_type<uint32_t>())).add_member(
         Member("second_inner_array", ArrayType(primitive_type<uint8_t>(), 10)));
-        
+    StringType st ;     
     inner_struct.add_member(
-        Member("inner_string", StringType())).add_member(
+        Member("inner_string", st)).add_member(
         Member("inner_float", primitive_type<float>())).add_member(
-        Member("inner_sequence_string", SequenceType(StringType()))).add_member(
+        Member("inner_sequence_string", SequenceType(st))).add_member(
         Member("inner_sequence_struct", SequenceType(second_inner_struct)));
                 
     the_struct.add_member( 
@@ -496,12 +493,12 @@ DynamicData create_dynamic_data(long double pi, StructType& the_struct/*, Struct
                 
     the_data["long_double"].value<>(pi);
 
-    for(int i = 0 ; i < 1E4 ; ++i) // creating "sequence"
+    for(int i = 0 ; i < 1E1 ; ++i) // creating "sequence"
     {
         DynamicData tmp_data(inner_struct);
         tmp_data["inner_string"].string("lay_down_and_cry") ;
         tmp_data["inner_float"].value(float(3.1415)) ;
-        for (int j = 0 ; j < 1E3 ; ++j) // creating "sequence.inner_sequence_string"
+        for (int j = 0 ; j < 1E1 ; ++j) // creating "sequence.inner_sequence_string"
         {
 //          StringType s ;
 //            DynamicData dst(s) ;
@@ -509,7 +506,7 @@ DynamicData create_dynamic_data(long double pi, StructType& the_struct/*, Struct
             tmp_data["inner_sequence_string"].push<string>("another_prick_in_the_world") ;
         }
                                 
-        for (int j = 0 ; j < 1E2 ; ++j) // creating "sequence.inner_sequence_struct"
+        for (int j = 0 ; j < 1E1 ; ++j) // creating "sequence.inner_sequence_struct"
         {
             DynamicData tmp_inner_data(second_inner_struct);
             tmp_inner_data["second_inner_string"].string("paint_it_black");
@@ -532,13 +529,15 @@ DynamicData create_dynamic_data(long double pi, StructType& the_struct/*, Struct
 
     return the_data ;
 }
-#if(0)
+#if(1)
 TEST (DynamicData, cascade_construction)
 {
     long double pi = 3.14159265358979323846 ;
     StructType the_struct("the_struct") ;
-    DynamicData the_data = create_dynamic_data(pi, the_struct/*, inner_struct, second_inner_struct*/) ;
-
+    StructType inner_struct("inner_struct");
+    StructType second_inner_struct("second_inner_struct");
+    
+    DynamicData the_data = create_dynamic_data(pi, the_struct, inner_struct, second_inner_struct) ;
 
     debug(false);
     EXPECT_EQ(45350234, the_data["uint32_t"].value<uint32_t>());
@@ -568,12 +567,12 @@ TEST (DynamicData, cascade_construction)
     
     for (int i = 0 ; i < 1E2 ; ++i)
     {
-        size_t idx_4 = lrand48()%int(1E4) ;
+        size_t idx_4 = lrand48()%int(1E1) ;
         EXPECT_EQ("lay_down_and_cry", the_data["sequence"][idx_4]["inner_string"].string()) ;
         EXPECT_EQ(3.1415f, the_data["sequence"][idx_4]["inner_float"].value<float>());
-        size_t idx_3 = lrand48()%int(1E3) ;
+        size_t idx_3 = lrand48()%int(1E1) ;
         EXPECT_EQ("another_prick_in_the_world", the_data["sequence"][idx_4]["inner_sequence_string"][idx_3].string()) ;
-        size_t idx_2 = lrand48()%int(1E2) ;
+        size_t idx_2 = lrand48()%int(1E1) ;
         EXPECT_EQ("paint_it_black", the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_string"].string()) ;
         EXPECT_EQ(38, the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_uint32_t"].value<uint32_t>()) ;
                 
@@ -920,12 +919,46 @@ TEST (DynamicData, testing_equality_check_string)
     EXPECT_EQ(true , d1 == d2) ;
     d2[0].value<uint64_t>(3457) ;
     EXPECT_NE(d1, d2) ;
-    d2[0].value<uint64_t>(3456) ;
+    d2[2].value<uint64_t>(3456) ;
     d2.push<uint64_t>(435) ;
     cout << "d2: " << d2[1].value<uint64_t>() << endl ;
     EXPECT_NE(d1, d2) ;
 }
 
+TEST (DynamicData, test_equality_check_struct)
+{
+    StructType stru("the_struct");
+    stru.add_member(Member("lld", primitive_type<long double>()));
+
+    DynamicData d1(stru);
+    d1["lld"].value<long double>(3.1415926) ;
+    DynamicData d2(stru);
+    d2["lld"].value<long double>(3.1415926) ;
+    EXPECT_EQ(d1, d2) ;
+    d2["lld"].value<long double>(3.1415925) ;
+    EXPECT_NE(d1, d2) ;
+
+    stru.add_member(Member("c", primitive_type<char>())) ;
+    DynamicData d3(stru) ;
+    d3["lld"].value<long double>(3.1415926) ;
+    EXPECT_NE(d3, d1) ;
+    d3["c"].value<char>(3.1415926) ;
+    EXPECT_NE(d3, d1) ;
+
+}
+#if(0)
+TEST (DynamicData, test_equality_complex_struct)
+{
+    StructType t1("t1"), t2("t2"), t3("t3") ;
+    StructType t4("t1"), t5("t2"), t6("t3") ;
+    DynamicData d1 = create_dynamic_data(3.1415926,t1, t2, t3 ) ;
+    DynamicData d2 = create_dynamic_data(3.141432,t4, t5, t6 ) ;
+    DynamicData d3 = d1 ;
+    EXPECT_NE(d1, d2) ;
+    
+    EXPECT_EQ(d1, d3) ;
+}
+#endif
 int main() 
 {
     testing::InitGoogleTest();
