@@ -1259,6 +1259,7 @@ TEST (QoS, ignore_member)
     EXPECT_EQ(TypeConsistency::IGNORE_MEMBERS , a.is_compatible(b));
     
 }
+
 int main() 
 {
     testing::InitGoogleTest();
