@@ -10,32 +10,36 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License.#include <iostream>
+// limitations under the License.
     
 #include <gtest/gtest.h>
 #include <dds/core/xtypes/xtypes.hpp>
 #include <iostream>
 
 #include <cmath>
+#include <bitset>
 
 using namespace std; 
 using namespace dds::core::xtypes;
-#define DEBUG_MACRO_OFF\
-    void debug(bool do_it=true){}
-                
 
-#define DEBUG_MACRO_ON \
-    size_t debug_count = 0; \
-    void debug(bool do_it=true) \
-    { \
-        if(do_it) \
-        { \
-            cout << "got up to: " << debug_count << endl; \
-            ++debug_count; \
-        } \
+#define DEBUG_MACRO_OFF
+
+
+#ifdef DEBUG_MACRO_ON 
+    size_t debug_count = 0; 
+    void debug(bool do_it=true) 
+    { 
+        if(do_it) 
+        { 
+            cout << "got up to: " << debug_count << endl; 
+            ++debug_count; 
+        } 
     }
+#else
+    void debug(bool do_it=true){}
+#endif                
 
-/********************************
+ /********************************
  *        DynamicType Tests        *
  ********************************/
 
@@ -174,7 +178,8 @@ TEST (StructType, type_verify_test)
         Member("double", primitive_type<double>())).add_member(
         Member("long double", primitive_type<long double>())).add_member(
         Member("char", primitive_type<char>())).add_member(
-        Member("char32_t", primitive_type<char32_t>()));
+        Member("char16_t", primitive_type<wchar_t>()));
+
      
     EXPECT_EQ(TypeKind::BOOLEAN_TYPE, st.member("bool").type().kind());
     EXPECT_EQ(TypeKind::UINT_8_TYPE, st.member("uint8_t").type().kind());
@@ -188,7 +193,7 @@ TEST (StructType, type_verify_test)
     EXPECT_EQ(TypeKind::FLOAT_64_TYPE, st.member("double").type().kind());
     EXPECT_EQ(TypeKind::FLOAT_128_TYPE, st.member("long double").type().kind());
     EXPECT_EQ(TypeKind::CHAR_8_TYPE, st.member("char").type().kind());
-    EXPECT_EQ(TypeKind::CHAR_32_TYPE, st.member("char32_t").type().kind());
+    EXPECT_EQ(TypeKind::CHAR_16_TYPE, st.member("char16_t").type().kind());
     EXPECT_EQ(TypeKind::STRUCTURE_TYPE, st.kind());
 
     EXPECT_NE(0, uint32_t(TypeKind::PRIMITIVE_TYPE) & uint32_t(st.member("bool").type().kind()));
@@ -203,7 +208,7 @@ TEST (StructType, type_verify_test)
     EXPECT_NE(0, uint32_t(TypeKind::PRIMITIVE_TYPE) & uint32_t(st.member("double").type().kind()));
     EXPECT_NE(0, uint32_t(TypeKind::PRIMITIVE_TYPE) & uint32_t(st.member("long double").type().kind()));
     EXPECT_NE(0, uint32_t(TypeKind::PRIMITIVE_TYPE) & uint32_t(st.member("char").type().kind()));
-    EXPECT_NE(0, uint32_t(TypeKind::PRIMITIVE_TYPE) & uint32_t(st.member("char32_t").type().kind()));
+    EXPECT_NE(0, uint32_t(TypeKind::PRIMITIVE_TYPE) & uint32_t(st.member("char16_t").type().kind()));
     EXPECT_NE(0, uint32_t(TypeKind::STRUCTURE_TYPE) & uint32_t(st.kind()));
 
 }
@@ -272,7 +277,7 @@ TEST (DynamicData, primitive_types)
     Member("double", primitive_type<double>())).add_member(
     Member("long double", primitive_type<long double>())).add_member(
     Member("char", primitive_type<char>())).add_member(
-    Member("char32_t", primitive_type<char32_t>()));
+    Member("char16_t", primitive_type<wchar_t>()));
 
     EXPECT_EQ(TypeKind::BOOLEAN_TYPE, st.member("bool").type().kind());
     EXPECT_EQ(TypeKind::UINT_8_TYPE, st.member("uint8_t").type().kind());
@@ -286,7 +291,7 @@ TEST (DynamicData, primitive_types)
     EXPECT_EQ(TypeKind::FLOAT_64_TYPE, st.member("double").type().kind());
     EXPECT_EQ(TypeKind::FLOAT_128_TYPE, st.member("long double").type().kind());
     EXPECT_EQ(TypeKind::CHAR_8_TYPE, st.member("char").type().kind());
-    EXPECT_EQ(TypeKind::CHAR_32_TYPE, st.member("char32_t").type().kind());
+    EXPECT_EQ(TypeKind::CHAR_16_TYPE, st.member("char16_t").type().kind());
     EXPECT_EQ(TypeKind::STRUCTURE_TYPE, st.kind());
 
     DynamicData d(st);
@@ -303,7 +308,7 @@ TEST (DynamicData, primitive_types)
     d["double"].value<double>(3.141592653589793115997963468544185161590576171875);
     d["long double"].value<long double>(3.1415926535897932385);
     d["char"].value<char>('f');
-    d["char32_t"].value<char32_t>(4294967290);
+    d["char16_t"].value<wchar_t>(34590);
     
     EXPECT_EQ(true, d["bool"].value<bool>()); 
     EXPECT_EQ(250, d["uint8_t"].value<uint8_t>());
@@ -317,7 +322,7 @@ TEST (DynamicData, primitive_types)
     EXPECT_EQ( double(3.141592653589793115997963468544185161590576171875) , d["double"].value<double>());
     EXPECT_EQ( 3.1415926535897932385 , d["long double"].value<long double>());
     EXPECT_EQ('f', d["char"].value<char>());
-    EXPECT_EQ(4294967290, d["char32_t"].value<char32_t>());
+    EXPECT_EQ(34590, d["char16_t"].value<wchar_t>());
 
 }
 
@@ -378,8 +383,6 @@ TEST (DynamicData, test_just_for_luis)
          exit(0xff); 
      }
 }
-
-DEBUG_MACRO_ON
 
 DynamicData cdd(StructType &st)
 {     
@@ -528,7 +531,7 @@ DynamicData create_dynamic_data(long double pi, StructType& the_struct, StructTy
 
     return the_data;
 }
-#if(1)
+
 TEST (DynamicData, cascade_construction)
 {
     long double pi = 3.14159265358979323846;
@@ -586,7 +589,6 @@ TEST (DynamicData, cascade_construction)
     }    
     debug(); //100
 }
-#endif
 
 TEST (DynamicData, curious_interactions)
 {
@@ -602,19 +604,19 @@ TEST (DynamicData, curious_interactions)
                 
     the_data["seq"].push(dstr);
     EXPECT_EQ("all_this_stuff", the_data["seq"][0].string());
-//    EXPECT_EQ("all_this_stuff", the_data["seq"].string());  <<======= this call fails. It is kept here as a memorandum
+//  EXPECT_EQ("all_this_stuff", the_data["seq"].string());<<=this call fails. It is kept here as a memorandum
 }
 
-TEST (DynamicType, testing_is_subset_of_string_no_bound)
+TEST (DynamicType, testing_is_compatible_string_no_bound)
 {
     StringType s;
     StringType r;
     
-    EXPECT_EQ(true, r.is_subset_of(s) );
-    EXPECT_EQ(true, s.is_subset_of(r) );
+    EXPECT_EQ(TypeConsistency::EQUALS, r.is_compatible(s) );
+    EXPECT_EQ(TypeConsistency::EQUALS, s.is_compatible(r) );
 }
 
-TEST (DynamicType, testing_is_subset_of_string_same_bound)
+TEST (DynamicType, testing_is_compatible_string_same_bound)
 {
     srand48(time(0));
     size_t b = lrand48()%1000;
@@ -622,44 +624,46 @@ TEST (DynamicType, testing_is_subset_of_string_same_bound)
     StringType s(b);
     StringType r(b);
     
-    EXPECT_EQ(true, r.is_subset_of(s) );
-    EXPECT_EQ(true, s.is_subset_of(r) );
+    EXPECT_EQ(TypeConsistency::EQUALS, r.is_compatible(s) );
+    EXPECT_EQ(TypeConsistency::EQUALS, s.is_compatible(r) );
 }
 
 
-TEST (DynamicType, testing_is_subset_of_string_different_bound)
+TEST (DynamicType, testing_is_compatible_string_different_bound)
 {
     StringType s(15);
     StringType r(30);
     
-    EXPECT_EQ(true, s.is_subset_of(r) );
-    EXPECT_EQ(false, r.is_subset_of(s) );
+    EXPECT_NE(0, uint32_t(TypeConsistency::IGNORE_STRING_BOUNDS) & uint32_t(s.is_compatible(r)) );
+    EXPECT_NE(0, uint32_t(TypeConsistency::IGNORE_STRING_BOUNDS) & uint32_t(r.is_compatible(s)) );
 }
 
 
-TEST (DynamicType, testing_is_subset_of_structure_of_string)
+TEST (DynamicType, testing_is_compatible_structure_of_string)
 {
-    StringType s;
-    StructType the_str("check");
-    the_str.add_member(Member("string", s));
-    StructType other_str("other_check");
-    other_str.add_member(Member("string", s));
-    EXPECT_EQ(true , the_str.is_subset_of(other_str));
-    EXPECT_EQ(true , other_str.is_subset_of(the_str));
+    StringType st ;
+    StructType r("check");
+    r.add_member(Member("string", st));
+    StructType s("other_check");
+    s.add_member(Member("string", st));
+
+    cout << "types: " << uint32_t(r.is_compatible(s)) << "  " << uint32_t(s.is_compatible(r)) << endl ; 
+    EXPECT_EQ(TypeConsistency::EQUALS , r.is_compatible(s) );
+    EXPECT_EQ(TypeConsistency::EQUALS , s.is_compatible(r) );
 }
 
-TEST (DynamicType, testing_is_subset_of_structure_of_sequence_no_bound)
+TEST (DynamicType, testing_is_compatible_structure_of_sequence_no_bound)
 {
     SequenceType s(primitive_type<uint32_t>());
     StructType the_str("check");
     the_str.add_member(Member("int", s));
     StructType other_str("other_check");
     other_str.add_member(Member("int", s));
-    EXPECT_EQ(true , the_str.is_subset_of(other_str));
-    EXPECT_EQ(true , other_str.is_subset_of(the_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , the_str.is_compatible(other_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , other_str.is_compatible(the_str));
 }
 
-TEST (DynamicType, testing_is_subset_of_structure_of_sequence_different_bound)
+TEST (DynamicType, testing_is_compatible_structure_of_sequence_different_bound)
 {
     SequenceType s(primitive_type<uint32_t>(),15);
     SequenceType r(primitive_type<uint32_t>(),19);
@@ -667,58 +671,59 @@ TEST (DynamicType, testing_is_subset_of_structure_of_sequence_different_bound)
     the_str.add_member(Member("int", s));
     StructType other_str("other_check");
     other_str.add_member(Member("int", r));
-    EXPECT_EQ(true , the_str.is_subset_of(other_str));
-    EXPECT_EQ(false , other_str.is_subset_of(the_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_SEQUENCE_BOUNDS, the_str.is_compatible(other_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_SEQUENCE_BOUNDS , other_str.is_compatible(the_str));
 }
 
-TEST (DynamicType, testing_is_subset_of_structure_of_sequence_same_bound)
+TEST (DynamicType, testing_is_compatible_structure_of_sequence_same_bound)
 {
     SequenceType s(primitive_type<uint32_t>(),15);
     StructType the_str("check");
     the_str.add_member(Member("int", s));
     StructType other_str("other_check");
     other_str.add_member(Member("int", s));
-    EXPECT_EQ(true , the_str.is_subset_of(other_str));
-    EXPECT_EQ(true , other_str.is_subset_of(the_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , the_str.is_compatible(other_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , other_str.is_compatible(the_str));
 }
 
-TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_int)
+TEST (DynamicType, testing_is_compatible_structure_of_primitive_type_int)
 {
     StructType the_str("check");
     the_str.add_member(Member("int", primitive_type<uint32_t>()));
     StructType other_str("other_check");
     other_str.add_member(Member("int", primitive_type<uint32_t>()));
-    EXPECT_EQ(true , the_str.is_subset_of(other_str));
-    EXPECT_EQ(true , other_str.is_subset_of(the_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , the_str.is_compatible(other_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , other_str.is_compatible(the_str));
 }
 
-TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_float)
+TEST (DynamicType, testing_is_compatible_structure_of_primitive_type_float)
 {
     StructType the_str("check");
     the_str.add_member(Member("int", primitive_type<long double>()));
     StructType other_str("other_check");
     other_str.add_member(Member("int", primitive_type<long double>()));
-    EXPECT_EQ(true , the_str.is_subset_of(other_str));
-    EXPECT_EQ(true , other_str.is_subset_of(the_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , the_str.is_compatible(other_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , other_str.is_compatible(the_str));
 }
 
-TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_char)
+TEST (DynamicType, testing_is_compatible_structure_of_primitive_type_char)
 {
     StructType the_str("check");
-    the_str.add_member(Member("int", primitive_type<char32_t>()));
+    the_str.add_member(Member("int", primitive_type<wchar_t>()));
     StructType other_str("other_check");
-    other_str.add_member(Member("int", primitive_type<char32_t>()));
+    other_str.add_member(Member("int", primitive_type<wchar_t>()));
     StructType another_str("another_check");
     another_str.add_member(Member("int", primitive_type<char>()));
-    EXPECT_EQ(true , the_str.is_subset_of(other_str));
-    EXPECT_EQ(false, the_str.is_subset_of(another_str));
-    EXPECT_EQ(true , other_str.is_subset_of(the_str));
-    EXPECT_EQ(false, other_str.is_subset_of(another_str));
-    EXPECT_EQ(false, another_str.is_subset_of(the_str));
-    EXPECT_EQ(false, another_str.is_subset_of(other_str));
+    
+    EXPECT_EQ(TypeConsistency::EQUALS , the_str.is_compatible(other_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_WIDTH, the_str.is_compatible(another_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , other_str.is_compatible(the_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_WIDTH, other_str.is_compatible(another_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_WIDTH, another_str.is_compatible(the_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_WIDTH, another_str.is_compatible(other_str));
 }
 
-TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_int32_t)
+TEST (DynamicType, testing_is_compatible_structure_of_primitive_type_int32_t)
 {
     StructType the_str("check");
     the_str.add_member(Member("int", primitive_type<uint32_t>()));
@@ -726,15 +731,15 @@ TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_int32_t)
     other_str.add_member(Member("int", primitive_type<uint32_t>()));
     StructType another_str("another_check");
     another_str.add_member(Member("int", primitive_type<int32_t>()));
-    EXPECT_EQ(true , the_str.is_subset_of(other_str));
-    EXPECT_EQ(false, the_str.is_subset_of(another_str));
-    EXPECT_EQ(true , other_str.is_subset_of(the_str));
-    EXPECT_EQ(false, other_str.is_subset_of(another_str));
-    EXPECT_EQ(false, another_str.is_subset_of(the_str));
-    EXPECT_EQ(false, another_str.is_subset_of(other_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , the_str.is_compatible(other_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_SIGN, the_str.is_compatible(another_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , other_str.is_compatible(the_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_SIGN, other_str.is_compatible(another_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_SIGN, another_str.is_compatible(the_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_SIGN, another_str.is_compatible(other_str));
 }
 
-TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_mixed_int)
+TEST (DynamicType, testing_is_compatible_structure_of_primitive_type_mixed_int)
 {
     StructType the_str("check");
     the_str.add_member(Member("int", primitive_type<uint16_t>()));
@@ -742,26 +747,25 @@ TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_mixed_int)
     other_str.add_member(Member("int", primitive_type<uint32_t>()));
     StructType another_str("another_check");
     another_str.add_member(Member("int", primitive_type<int64_t>()));
-    EXPECT_EQ(false, the_str.is_subset_of(other_str));
-    EXPECT_EQ(false, the_str.is_subset_of(another_str));
-    EXPECT_EQ(false, other_str.is_subset_of(the_str));
-    EXPECT_EQ(false, other_str.is_subset_of(another_str));
-    EXPECT_EQ(false, another_str.is_subset_of(the_str));
-    EXPECT_EQ(false, another_str.is_subset_of(other_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_WIDTH, the_str.is_compatible(other_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_WIDTH |
+              TypeConsistency::IGNORE_TYPE_SIGN, the_str.is_compatible(another_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_WIDTH |
+              TypeConsistency::IGNORE_TYPE_SIGN, other_str.is_compatible(another_str));
 }
 
-TEST (DynamicType, testing_is_subset_of_structure_of_array_same_bound)
+TEST (DynamicType, testing_is_compatible_structure_of_array_same_bound)
 {
     StructType the_str("check");
     ArrayType the_array(primitive_type<uint32_t>(), 10);
     the_str.add_member(Member("arr", the_array));
     StructType other_str("other_check");
     other_str.add_member(Member("arr", the_array));
-    EXPECT_EQ(true , the_str.is_subset_of(other_str));
-    EXPECT_EQ(true , other_str.is_subset_of(the_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , the_str.is_compatible(other_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , other_str.is_compatible(the_str));
 }
 
-TEST (DynamicType, testing_is_subset_of_structure_of_array_different_bound_and_type)
+TEST (DynamicType, testing_is_compatible_structure_of_array_different_bound_and_type)
 {
     StructType the_str("check");
     ArrayType the_array(primitive_type<uint32_t>(), 10);
@@ -775,12 +779,12 @@ TEST (DynamicType, testing_is_subset_of_structure_of_array_different_bound_and_t
     StructType another_str("other_check");
     another_str.add_member(Member("arr", another_array));
 
-    EXPECT_EQ(true , the_str.is_subset_of(other_str));
-    EXPECT_EQ(false, the_str.is_subset_of(another_str));
-    EXPECT_EQ(false, other_str.is_subset_of(the_str));
-    EXPECT_EQ(false, other_str.is_subset_of(another_str));
-    EXPECT_EQ(false, another_str.is_subset_of(the_str));
-    EXPECT_EQ(false, another_str.is_subset_of(other_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS , the_str.is_compatible(other_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_SIGN, the_str.is_compatible(another_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS, other_str.is_compatible(the_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS | TypeConsistency::IGNORE_TYPE_SIGN, other_str.is_compatible(another_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_SIGN, another_str.is_compatible(the_str));
+    EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS | TypeConsistency::IGNORE_TYPE_SIGN, another_str.is_compatible(other_str));
 }
 
 TEST (DynamicData, testing_equality_check_primitive_type)
@@ -898,12 +902,12 @@ TEST (DynamicData, testing_equality_check_primitive_type)
     }
 
     {
-        DynamicData dd1(primitive_type<char32_t>());
-        DynamicData dd2(primitive_type<char32_t>());
-        dd1.value(char32_t(RAND_MAX));
-        dd2.value(char32_t(RAND_MAX));
+        DynamicData dd1(primitive_type<wchar_t>());
+        DynamicData dd2(primitive_type<wchar_t>());
+        dd1.value(char16_t(RAND_MAX));
+        dd2.value(char16_t(RAND_MAX));
         EXPECT_EQ(dd1, dd2);
-        dd2.value(char32_t(RAND_MAX - 1));
+        dd2.value(char16_t(RAND_MAX - 1));
         EXPECT_NE(dd1, dd2);
     }
 }
@@ -941,23 +945,10 @@ TEST (DynamicData, test_equality_check_struct)
     DynamicData d3(stru);
     d3["lld"].value<long double>(3.1415926);
     EXPECT_NE(d3, d1);
-    d3["c"].value<char>(3.1415926);
+    d3["c"].value<char>(3.1415926); //just an :"out of the ordinady
     EXPECT_NE(d3, d1);
 
 }
-#if(0)
-TEST (DynamicData, test_equality_complex_struct)
-{
-    StructType t1("t1"), t2("t2"), t3("t3");
-    StructType t4("t1"), t5("t2"), t6("t3");
-    DynamicData d1 = create_dynamic_data(3.1415926,t1, t2, t3 );
-    DynamicData d2 = create_dynamic_data(3.141432,t4, t5, t6 );
-    DynamicData d3 = d1;
-    EXPECT_NE(d1, d2);
-    
-    EXPECT_EQ(d1, d3);
-}
-#endif
 
 namespace{
     template<typename T>
@@ -970,6 +961,7 @@ namespace{
         return o;
     }
 }
+
 TEST (DynamicData, test_equality_complex_struct)
 {
     ArrayType ar(primitive_type<uint32_t>(), 15);
@@ -1002,6 +994,271 @@ TEST (DynamicData, test_equality_complex_struct)
 
 }
 
+TEST (DynamicType , wstring_and_wstring_struct)
+{
+    WStringType wst;
+    StringType st;
+    DynamicData d(wst) ;
+    DynamicData dd(st) ;
+
+    d.wstring(L"sadfsfdasdf");
+    dd.string("sadfsfdasdf");
+   
+    EXPECT_EQ( TypeConsistency::NONE, wst.is_compatible(st) );
+    EXPECT_EQ( TypeConsistency::NONE, st.is_compatible(wst) );
+
+    StructType struc1("the_struct");
+    struc1.add_member(Member("theString", wst )) ;
+
+    
+    StructType struc2("the_struct");
+    struc2.add_member(Member("theString", st )) ;
+
+    EXPECT_EQ( TypeConsistency::NONE, struc1.is_compatible(struc2) );
+    EXPECT_EQ( TypeConsistency::NONE, struc2.is_compatible(struc1) );
+}
+
+TEST (QoS, sequence)
+{
+    SequenceType s1(primitive_type<uint16_t>(), 10) ;
+    SequenceType s2(primitive_type<uint16_t>(), 20) ;
+
+    DynamicData d(s1) ;
+
+    for(int i = 0 ; i < 10 ; ++i)
+    {
+        d.push(uint16_t()) ;
+    }
+    d[9].value<uint16_t>(256);
+    
+    cout << "primo: " << endl ;
+    for(int i = 0 ; i < 10 ; ++i)
+    {
+        cout << '(' << d[i].value<uint16_t>() <<')';
+    }
+    cout << endl ;
+    DynamicData dd(d, s2) ;
+
+    cout << "secondo: " << endl ;
+    for(int i = 0 ; i < 10 ; ++i)
+    {
+        cout << '(' << dd[i].value<uint16_t>() << ')' ; 
+    }
+    cout << endl;
+    EXPECT_EQ(10, dd.size()) ;
+}
+
+TEST (QoS, other_sequence)
+{
+    SequenceType s1(primitive_type<uint16_t>(), 20) ;
+    SequenceType s2(primitive_type<uint16_t>(), 10) ;
+
+    DynamicData d(s1) ;
+
+    for(int i = 0 ; i < 20 ; ++i)
+    {
+        d.push(uint16_t()) ;
+    }
+    d[9].value<uint16_t>(256);
+    
+    cout << "primo: " << endl ;
+    for(int i = 0 ; i < 20 ; ++i)
+    {
+        cout << '(' << d[i].value<uint16_t>() << ')'; 
+    }
+    cout << endl;
+    DynamicData dd(d, s2) ;
+
+    cout << "secondo: " << endl ;
+    for(size_t i = 0 ; i < dd.size() ; ++i)
+    {
+        cout << '(' << dd[i].value<uint16_t>() << ')';
+    }
+    cout << endl; 
+    EXPECT_EQ(10, dd.size()) ;
+}
+
+TEST (QoS, string)
+{
+    StringType s(20) ;
+    StringType t(10);
+    
+    EXPECT_EQ(s.is_compatible(t) , t.is_compatible(s)) ;
+    EXPECT_EQ(TypeConsistency::IGNORE_STRING_BOUNDS, t.is_compatible(s)) ;
+    
+    DynamicData d(s);
+    d.string("12345678901234567890");
+    
+    DynamicData e(d,t) ;
+    EXPECT_EQ(10, e.size()); //still pending investigation
+}
+
+TEST (QoS, other_string)
+{
+    StringType s(10) ;
+    StringType t(20);
+    
+    EXPECT_EQ(s.is_compatible(t) , t.is_compatible(s)) ;
+    EXPECT_EQ(TypeConsistency::IGNORE_STRING_BOUNDS, t.is_compatible(s)) ;
+    
+    DynamicData d(s);
+    d.string("1234567890");
+    
+    DynamicData e(d,t) ;
+    EXPECT_EQ(10, e.size()); 
+}
+
+TEST (QoS, wstring)
+{
+    WStringType s(20) ;
+    WStringType t(10);
+    
+    EXPECT_EQ(s.is_compatible(t) , t.is_compatible(s)) ;
+    EXPECT_EQ(TypeConsistency::IGNORE_STRING_BOUNDS, t.is_compatible(s)) ;
+    
+    DynamicData d(s);
+    d.wstring(L"12345678901234567890");
+    
+    DynamicData e(d,t) ;
+    EXPECT_EQ(10, e.size()); //still pending investigation
+}
+
+TEST (QoS, other_wstring)
+{
+    WStringType s(10) ;
+    WStringType t(20);
+    
+    EXPECT_EQ(s.is_compatible(t) , t.is_compatible(s)) ;
+    EXPECT_EQ(TypeConsistency::IGNORE_STRING_BOUNDS, t.is_compatible(s)) ;
+    
+    DynamicData d(s);
+    d.wstring(L"1234567890");
+    
+    DynamicData e(d,t) ;
+    EXPECT_EQ(10, e.size()); 
+}
+
+TEST (QoS, array)
+{
+    ArrayType a(primitive_type<uint16_t>(), 10);
+    ArrayType b(primitive_type<uint16_t>(), 20);
+    
+    DynamicData d(a);
+    d[8].value(10) ;
+    for(size_t i = 0 ; i < 10 ; ++i)
+    {
+        cout << '(' << d[i].value<uint16_t>() << ')';
+    }
+    cout << '\n';
+    DynamicData e(d,b);
+    for(size_t i = 0 ; i < e.size() ; ++i)
+    {
+        cout << '(' << e[i].value<uint16_t>() << ')'; 
+    }
+    cout << '\n';
+    EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS, b.is_compatible(a)) ;
+}
+
+TEST (QoS, other_array)
+{
+    ArrayType a(primitive_type<uint16_t>(), 20);
+    ArrayType b(primitive_type<uint16_t>(), 10);
+    
+    DynamicData d(a);
+    d[8].value(10) ;
+    d[13].value(10) ;
+    for(size_t i = 0 ; i < d.size() ; ++i)
+    {
+        cout << '(' << d[i].value<uint16_t>() << ')';
+    }
+    cout << '\n';
+    DynamicData e(d,b);
+    for(size_t i = 0 ; i < e.size() ; ++i)
+    {
+        cout << '(' << e[i].value<uint16_t>() << ')'; 
+    }
+    cout << '\n';
+    EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS, b.is_compatible(a)) ;
+}
+
+TEST (QoS, Array_qos)
+{
+
+    ArrayType a_arr(primitive_type<uint16_t>(), 10);
+    ArrayType b_arr(primitive_type<int32_t>(), 11);
+
+    EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS |
+              TypeConsistency::IGNORE_TYPE_WIDTH |
+              TypeConsistency::IGNORE_TYPE_SIGN , a_arr.is_compatible(b_arr));
+    
+    cout << (bitset<16>(uint16_t(a_arr.is_compatible(b_arr)))) << endl ;
+}
+
+TEST (QoS, mixed_types)
+{
+    StructType a("composition");
+    StructType b("composition");
+    StringType a_string(10);
+    WStringType b_wstring(10);
+    SequenceType a_seq(primitive_type<uint32_t>(), 10);
+    SequenceType b_seq(primitive_type<int32_t>(), 11);
+    ArrayType a_arr(primitive_type<uint16_t>(), 10);
+    ArrayType b_arr(primitive_type<int32_t>(), 11);
+
+
+    
+    EXPECT_EQ(TypeConsistency::IGNORE_TYPE_WIDTH, a_string.is_compatible(b_wstring));
+
+    EXPECT_EQ(TypeConsistency::IGNORE_SEQUENCE_BOUNDS |
+              TypeConsistency::IGNORE_TYPE_SIGN, a_seq.is_compatible(b_seq));
+
+    EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS |
+              TypeConsistency::IGNORE_TYPE_WIDTH |
+              TypeConsistency::IGNORE_TYPE_SIGN , a_arr.is_compatible(b_arr));
+    
+    a.add_member(
+            Member("a_string", a_string)).add_member(
+            Member("a_seq", a_seq)).add_member(
+            Member("a_arr", a_arr)).add_member(
+            Member("a_primitive", primitive_type<wchar_t>()));
+
+    b.add_member(
+            Member("b_wstring", b_wstring)).add_member(
+            Member("b_seq", b_seq)).add_member(
+            Member("b_arr", b_arr));
+
+    EXPECT_EQ(TypeConsistency::IGNORE_MEMBER_NAMES|
+              TypeConsistency::IGNORE_TYPE_SIGN |
+              TypeConsistency::IGNORE_TYPE_WIDTH |
+              TypeConsistency::IGNORE_STRING_BOUNDS |
+              TypeConsistency::IGNORE_SEQUENCE_BOUNDS |
+              TypeConsistency::IGNORE_ARRAY_BOUNDS |
+              TypeConsistency::IGNORE_MEMBERS , a.is_compatible(b));
+    
+
+}
+
+TEST (QoS, ignore_member)
+{
+    StructType a("composition");
+    StructType b("composition");
+    StringType string(10);
+    SequenceType seq(primitive_type<uint32_t>(), 10);
+    ArrayType arr(primitive_type<uint16_t>(), 10);
+    a.add_member(
+            Member("string", string)).add_member(
+            Member("seq", seq)).add_member(
+            Member("arr", arr)).add_member(
+            Member("primitive", primitive_type<wchar_t>()));
+    
+    b.add_member(
+            Member("string", string)).add_member(
+            Member("seq", seq)).add_member(
+            Member("arr", arr));
+
+    EXPECT_EQ(TypeConsistency::IGNORE_MEMBERS , a.is_compatible(b));
+    
+}
 int main() 
 {
     testing::InitGoogleTest();
