@@ -962,6 +962,17 @@ namespace{
     }
 }
 
+namespace{
+    template<typename T>
+    ostream& operator << (ostream& o, const vector<T>& v)
+    {
+        for(auto it = v.begin() ; it != v.end() ; ++it)
+        {
+            o << '(' << *it << ')'  ;
+        }
+        return o ;
+    }
+}
 TEST (DynamicData, test_equality_complex_struct)
 {
     ArrayType ar(primitive_type<uint32_t>(), 15);
