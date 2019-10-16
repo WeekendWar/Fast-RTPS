@@ -919,7 +919,7 @@ TEST (DynamicData, testing_equality_check_string)
     EXPECT_EQ(true , d1 == d2) ;
     d2[0].value<uint64_t>(3457) ;
     EXPECT_NE(d1, d2) ;
-    d2[2].value<uint64_t>(3456) ;
+    d2[0].value<uint64_t>(3456) ;
     d2.push<uint64_t>(435) ;
     cout << "d2: " << d2[1].value<uint64_t>() << endl ;
     EXPECT_NE(d1, d2) ;
@@ -960,23 +960,47 @@ TEST (DynamicData, test_equality_complex_struct)
 }
 #endif
 
+namespace{
+    template<typename T>
+    ostream& operator << (ostream& o, const vector<T>& v)
+    {
+        for(auto it = v.begin() ; it != v.end() ; ++it)
+        {
+            o << '(' << *it << ')'  ;
+        }
+        return o ;
+    }
+}
 TEST (DynamicData, test_equality_complex_struct)
 {
     ArrayType ar(primitive_type<uint32_t>(), 15) ;
     SequenceType se(primitive_type<uint32_t>(), 15) ;
-    
+    StringType str ;
+    SequenceType seq(str, 15) ;
     StructType st("the_type");
     st.add_member(Member("array", ar));
     st.add_member(Member("sequence", se));
+    st.add_member(Member("seqstring", seq));
+    st.add_member(Member("string", str)) ;
     DynamicData d1(st);
+    d1["string"].string("sono io che sono qui") ;
 
     for(int i=0 ; i < 15 ; ++i)
     {
         d1["array"][i].value<uint32_t>(42);
         d1["sequence"].push<uint32_t>(42);
+        d1["seqstring"].push<string>("ci sono anche io");
     }
+    vector<char> v = d1["string"].as_vector<char>() ;
+    vector<string> vv = d1["seqstring"].as_vector<string>() ;
     vector<uint32_t> t = d1["array"].as_vector<uint32_t>() ;
     vector<uint32_t> s = d1["sequence"].as_vector<uint32_t>() ;
+    
+    cout << v << endl ;
+    cout << vv << endl ;
+    cout << t << endl ;
+    cout << s << endl ;
+
 }
 
 int main() 
