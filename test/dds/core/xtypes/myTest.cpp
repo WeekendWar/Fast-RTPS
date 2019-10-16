@@ -959,6 +959,26 @@ TEST (DynamicData, test_equality_complex_struct)
     EXPECT_EQ(d1, d3) ;
 }
 #endif
+
+TEST (DynamicData, test_equality_complex_struct)
+{
+    ArrayType ar(primitive_type<uint32_t>(), 15) ;
+    SequenceType se(primitive_type<uint32_t>(), 15) ;
+    
+    StructType st("the_type");
+    st.add_member(Member("array", ar));
+    st.add_member(Member("sequence", se));
+    DynamicData d1(st);
+
+    for(int i=0 ; i < 15 ; ++i)
+    {
+        d1["array"][i].value<uint32_t>(42);
+        d1["sequence"].push<uint32_t>(42);
+    }
+    vector<uint32_t> t = d1["array"].as_vector<uint32_t>() ;
+    vector<uint32_t> s = d1["sequence"].as_vector<uint32_t>() ;
+}
+
 int main() 
 {
     testing::InitGoogleTest();
