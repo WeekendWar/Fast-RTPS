@@ -25,13 +25,13 @@ using namespace dds::core::xtypes;
                 
 
 #define DEBUG_MACRO_ON \
-    size_t debug_count = 0 ; \
+    size_t debug_count = 0; \
     void debug(bool do_it=true) \
     { \
         if(do_it) \
         { \
-            cout << "got up to: " << debug_count << endl ; \
-            ++debug_count ; \
+            cout << "got up to: " << debug_count << endl; \
+            ++debug_count; \
         } \
     }
 
@@ -289,7 +289,7 @@ TEST (DynamicData, primitive_types)
     EXPECT_EQ(TypeKind::CHAR_32_TYPE, st.member("char32_t").type().kind());
     EXPECT_EQ(TypeKind::STRUCTURE_TYPE, st.kind());
 
-    DynamicData d(st) ;
+    DynamicData d(st);
     
     d["bool"].value<bool>(true);
     d["uint8_t"].value<uint8_t>(250);
@@ -313,7 +313,7 @@ TEST (DynamicData, primitive_types)
     EXPECT_EQ(4294967290, d["uint32_t"].value<uint32_t>());
     EXPECT_EQ(-9223372036854775800, d["int64_t"].value<int64_t>());
     EXPECT_EQ(18446744073709551610ULL,d["uint64_t"].value<uint64_t>());
-    EXPECT_EQ( float(3.1415927410125732421875) , d["float"].value<float>()) ;   
+    EXPECT_EQ( float(3.1415927410125732421875) , d["float"].value<float>());   
     EXPECT_EQ( double(3.141592653589793115997963468544185161590576171875) , d["double"].value<double>());
     EXPECT_EQ( 3.1415926535897932385 , d["long double"].value<long double>());
     EXPECT_EQ('f', d["char"].value<char>());
@@ -323,14 +323,14 @@ TEST (DynamicData, primitive_types)
 
 TEST (DynamicData, long_random_sequence)
 {
-    SequenceType st(primitive_type<double>()) ;
+    SequenceType st(primitive_type<double>());
 
-    DynamicData d(st) ;
-    srand48(time(0)) ;
+    DynamicData d(st);
+    srand48(time(0));
     
-    for(int i = 0 ; i < 65000 ; ++i)
+    for(int i = 0; i < 65000; ++i)
     {
-        double r = lrand48()/double(RAND_MAX) ;
+        double r = lrand48()/double(RAND_MAX);
         d.push(r);
         EXPECT_EQ(r, d[i].value<double>());
     }
@@ -338,17 +338,17 @@ TEST (DynamicData, long_random_sequence)
 
 TEST (DynamicData, sequence)
 {
-    StructType s("struct") ;
-    s.add_member(Member("sequence_1", SequenceType(primitive_type<char>()))) ;
-    s.add_member(Member("sequence_2", SequenceType(primitive_type<char>()))) ;
+    StructType s("struct");
+    s.add_member(Member("sequence_1", SequenceType(primitive_type<char>())));
+    s.add_member(Member("sequence_2", SequenceType(primitive_type<char>())));
     {
-        DynamicData d(s) ;
-        d["sequence_1"].push('a') ;
-        d["sequence_1"].push('b') ;
-        d["sequence_1"].push('c') ;
-        d["sequence_1"].push('d') ;
-        d["sequence_1"].push('e') ;
-        d["sequence_2"].push(d["sequence_1"]) ;
+        DynamicData d(s);
+        d["sequence_1"].push('a');
+        d["sequence_1"].push('b');
+        d["sequence_1"].push('c');
+        d["sequence_1"].push('d');
+        d["sequence_1"].push('e');
+        d["sequence_2"].push(d["sequence_1"]);
     }                
 }
 
@@ -374,8 +374,8 @@ TEST (DynamicData, test_just_for_luis)
     }
     catch(exception &e)
     {
-         cout << "dove: " << e.what() ;
-         exit(0xff) ; 
+         cout << "dove: " << e.what();
+         exit(0xff); 
      }
 }
 
@@ -383,29 +383,29 @@ DEBUG_MACRO_ON
 
 DynamicData cdd(StructType &st)
 {     
-    StringType stri_t ;
-    SequenceType sequ_t(stri_t) ;
-    StructType stru_t("just_a_struct") ;
+    StringType stri_t;
+    SequenceType sequ_t(stri_t);
+    StructType stru_t("just_a_struct");
     stru_t.add_member(
     Member("sequence", sequ_t));
                 
-    StructType sec_stru("another_struct") ;
+    StructType sec_stru("another_struct");
     sec_stru.add_member(
         Member("int", primitive_type<uint32_t>()));
                 
-    st.add_member("struct", stru_t).add_member("other_struct", sec_stru) ;
+    st.add_member("struct", stru_t).add_member("other_struct", sec_stru);
     
-    DynamicData dd(st) ;
-    for(int i = 0 ; i < 1E1; ++i)
+    DynamicData dd(st);
+    for(int i = 0; i < 1E1; ++i)
         dd["struct"]["sequence"].push<string>("checking");
-    return dd ;
+    return dd;
 }
 
 TEST (DynamicData, cp_type)
 {
     StructType st("st");
-    DynamicData dd = cdd(st) ;
-    cout << dd["struct"]["sequence"][7].string() << endl ;
+    DynamicData dd = cdd(st);
+    cout << dd["struct"]["sequence"][7].string() << endl;
 }
 
 
@@ -415,25 +415,25 @@ DynamicData ret_dyn_data(StructType &st, int i )
         case 1:
             st.add_member(
                 Member("int", primitive_type<int32_t>()));
-            break ;
+            break;
         case 2:
             st.add_member(
                 Member("array", ArrayType(primitive_type<uint32_t>(), 10)));
-            break ;
+            break;
         default:
-            break ;
+            break;
     }
-    DynamicData dt(st) ;
+    DynamicData dt(st);
     switch(i){
         case 1:
             dt["int"].value<int32_t>(32);
-            break ;
+            break;
         case 2:
-            for(size_t j = 0 ; j < 10 ; ++j)
+            for(size_t j = 0; j < 10; ++j)
                 dt["array"][i].value<uint32_t>(32);
-            break ;
+            break;
         default:
-            break ;
+            break;
     }
     return dt;
 }
@@ -441,22 +441,22 @@ DynamicData ret_dyn_data(StructType &st, int i )
 TEST (DynamicData, cp)
 {
     StructType ist("int_st");
-    DynamicData idt = ret_dyn_data(ist, 1) ;
+    DynamicData idt = ret_dyn_data(ist, 1);
 
     StructType ast("arr_st");
-    DynamicData adt = ret_dyn_data(ast, 2) ;
+    DynamicData adt = ret_dyn_data(ast, 2);
 }
 
 
 DynamicData create_dynamic_data(long double pi, StructType& the_struct, StructType& inner_struct, StructType& second_inner_struct)
 {
-//    StructType inner_struct("inner_struct") ;
+//    StructType inner_struct("inner_struct");
 //    StructType second_inner_struct("second_inner_struct");
     second_inner_struct.add_member(
         Member("second_inner_string", StringType())).add_member(
         Member("second_inner_uint32_t", primitive_type<uint32_t>())).add_member(
         Member("second_inner_array", ArrayType(primitive_type<uint8_t>(), 10)));
-    StringType st ;     
+    StringType st;     
     inner_struct.add_member(
         Member("inner_string", st)).add_member(
         Member("inner_float", primitive_type<float>())).add_member(
@@ -478,65 +478,65 @@ DynamicData create_dynamic_data(long double pi, StructType& the_struct, StructTy
         Member("array", ArrayType(ArrayType(primitive_type<long double>(), 10), 10))).add_member(
         Member("sequence", SequenceType(inner_struct)));
                 
-    DynamicData the_data(the_struct) ;
-    the_data["bool"].value(true) ;
-    the_data["uint8_t"].value(uint8_t(230)) ;
+    DynamicData the_data(the_struct);
+    the_data["bool"].value(true);
+    the_data["uint8_t"].value(uint8_t(230));
     the_data["int16_t"].value<>(int16_t(-784));
     the_data["uint16_t"].value<>(uint16_t(784));
     the_data["int32_t"].value<>(int32_t(-5469372));
-    the_data["uint32_t"].value<>(uint32_t(45350234)) ;
+    the_data["uint32_t"].value<>(uint32_t(45350234));
     the_data["int64_t"].value<>(int64_t(-1234523556));
     the_data["uint64_t"].value<>(uint64_t(1234523556));
-    the_data["float"].value<>(float(3.1415926)) ;
+    the_data["float"].value<>(float(3.1415926));
     the_data["double"].value<>(double(-3.14159264));
                 
     the_data["long_double"].value<>(pi);
 
-    for(int i = 0 ; i < 1E1 ; ++i) // creating "sequence"
+    for(int i = 0; i < 1E1; ++i) // creating "sequence"
     {
         DynamicData tmp_data(inner_struct);
-        tmp_data["inner_string"].string("lay_down_and_cry") ;
-        tmp_data["inner_float"].value(float(3.1415)) ;
-        for (int j = 0 ; j < 1E1 ; ++j) // creating "sequence.inner_sequence_string"
+        tmp_data["inner_string"].string("lay_down_and_cry");
+        tmp_data["inner_float"].value(float(3.1415));
+        for (int j = 0; j < 1E1; ++j) // creating "sequence.inner_sequence_string"
         {
-//          StringType s ;
-//            DynamicData dst(s) ;
+//          StringType s;
+//            DynamicData dst(s);
 //            dst.string("another_prick_in_the_world");
-            tmp_data["inner_sequence_string"].push<string>("another_prick_in_the_world") ;
+            tmp_data["inner_sequence_string"].push<string>("another_prick_in_the_world");
         }
                                 
-        for (int j = 0 ; j < 1E1 ; ++j) // creating "sequence.inner_sequence_struct"
+        for (int j = 0; j < 1E1; ++j) // creating "sequence.inner_sequence_struct"
         {
             DynamicData tmp_inner_data(second_inner_struct);
             tmp_inner_data["second_inner_string"].string("paint_it_black");
-            tmp_inner_data["second_inner_uint32_t"].value<>(uint32_t(38)) ;
-            for(int k = 0 ; k < 1E1 ; ++k) //creating "sequence.inner_sequence_struct.second_inner_array"
+            tmp_inner_data["second_inner_uint32_t"].value<>(uint32_t(38));
+            for(int k = 0; k < 1E1; ++k) //creating "sequence.inner_sequence_struct.second_inner_array"
             {
-                tmp_inner_data["second_inner_array"][k].value<uint8_t>(56) ;
+                tmp_inner_data["second_inner_array"][k].value<uint8_t>(56);
             }
             tmp_data["inner_sequence_struct"].push(tmp_inner_data);
         }
-        for(int j = 0 ; j < 1E1 ; ++j)
+        for(int j = 0; j < 1E1; ++j)
         {
-            for(int k = 0 ; k < 1E1 ; ++k)
+            for(int k = 0; k < 1E1; ++k)
             {
-                the_data["array"][j][k].value<long double>(3.1415) ;
+                the_data["array"][j][k].value<long double>(3.1415);
             }
         }
         the_data["sequence"].push(tmp_data);
     }
 
-    return the_data ;
+    return the_data;
 }
 #if(1)
 TEST (DynamicData, cascade_construction)
 {
-    long double pi = 3.14159265358979323846 ;
-    StructType the_struct("the_struct") ;
+    long double pi = 3.14159265358979323846;
+    StructType the_struct("the_struct");
     StructType inner_struct("inner_struct");
     StructType second_inner_struct("second_inner_struct");
     
-    DynamicData the_data = create_dynamic_data(pi, the_struct, inner_struct, second_inner_struct) ;
+    DynamicData the_data = create_dynamic_data(pi, the_struct, inner_struct, second_inner_struct);
 
     debug(false);
     EXPECT_EQ(45350234, the_data["uint32_t"].value<uint32_t>());
@@ -562,24 +562,24 @@ TEST (DynamicData, cascade_construction)
     EXPECT_EQ(pi, the_data["long_double"].value<long double>());
     debug(false);
 
-    srand48(time(0)) ;
+    srand48(time(0));
     
-    for (int i = 0 ; i < 1E2 ; ++i)
+    for (int i = 0; i < 1E2; ++i)
     {
-        size_t idx_4 = lrand48()%int(1E1) ;
-        EXPECT_EQ("lay_down_and_cry", the_data["sequence"][idx_4]["inner_string"].string()) ;
+        size_t idx_4 = lrand48()%int(1E1);
+        EXPECT_EQ("lay_down_and_cry", the_data["sequence"][idx_4]["inner_string"].string());
         EXPECT_EQ(3.1415f, the_data["sequence"][idx_4]["inner_float"].value<float>());
-        size_t idx_3 = lrand48()%int(1E1) ;
-        EXPECT_EQ("another_prick_in_the_world", the_data["sequence"][idx_4]["inner_sequence_string"][idx_3].string()) ;
-        size_t idx_2 = lrand48()%int(1E1) ;
-        EXPECT_EQ("paint_it_black", the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_string"].string()) ;
-        EXPECT_EQ(38, the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_uint32_t"].value<uint32_t>()) ;
+        size_t idx_3 = lrand48()%int(1E1);
+        EXPECT_EQ("another_prick_in_the_world", the_data["sequence"][idx_4]["inner_sequence_string"][idx_3].string());
+        size_t idx_2 = lrand48()%int(1E1);
+        EXPECT_EQ("paint_it_black", the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_string"].string());
+        EXPECT_EQ(38, the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_uint32_t"].value<uint32_t>());
                 
         size_t arr_idx_3 = lrand48()%int(1E1);
         size_t arr_idx_2 = lrand48()%int(1E1);
         size_t arr_idx_1 = lrand48()%int(1E1);
                                 
-        long double check_over = 3.1415 ;
+        long double check_over = 3.1415;
         EXPECT_EQ(check_over, the_data["array"][arr_idx_3][arr_idx_2].value<long double>());
         EXPECT_EQ(uint8_t(56), the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_array"][arr_idx_1].value<uint8_t>());
         debug(false);
@@ -607,77 +607,77 @@ TEST (DynamicData, curious_interactions)
 
 TEST (DynamicType, testing_is_subset_of_string_no_bound)
 {
-    StringType s ;
-    StringType r ;
+    StringType s;
+    StringType r;
     
-    EXPECT_EQ(true, r.is_subset_of(s) ) ;
-    EXPECT_EQ(true, s.is_subset_of(r) ) ;
+    EXPECT_EQ(true, r.is_subset_of(s) );
+    EXPECT_EQ(true, s.is_subset_of(r) );
 }
 
 TEST (DynamicType, testing_is_subset_of_string_same_bound)
 {
-    srand48(time(0)) ;
+    srand48(time(0));
     size_t b = lrand48()%1000;
-    cout << "the_bound: " << b << endl ;
-    StringType s(b) ;
-    StringType r(b) ;
+    cout << "the_bound: " << b << endl;
+    StringType s(b);
+    StringType r(b);
     
-    EXPECT_EQ(true, r.is_subset_of(s) ) ;
-    EXPECT_EQ(true, s.is_subset_of(r) ) ;
+    EXPECT_EQ(true, r.is_subset_of(s) );
+    EXPECT_EQ(true, s.is_subset_of(r) );
 }
 
 
 TEST (DynamicType, testing_is_subset_of_string_different_bound)
 {
-    StringType s(15) ;
-    StringType r(30) ;
+    StringType s(15);
+    StringType r(30);
     
-    EXPECT_EQ(true, s.is_subset_of(r) ) ;
-    EXPECT_EQ(false, r.is_subset_of(s) ) ;
+    EXPECT_EQ(true, s.is_subset_of(r) );
+    EXPECT_EQ(false, r.is_subset_of(s) );
 }
 
 
 TEST (DynamicType, testing_is_subset_of_structure_of_string)
 {
-    StringType s ;
+    StringType s;
     StructType the_str("check");
-    the_str.add_member(Member("string", s)) ;
+    the_str.add_member(Member("string", s));
     StructType other_str("other_check");
-    other_str.add_member(Member("string", s)) ;
+    other_str.add_member(Member("string", s));
     EXPECT_EQ(true , the_str.is_subset_of(other_str));
     EXPECT_EQ(true , other_str.is_subset_of(the_str));
 }
 
 TEST (DynamicType, testing_is_subset_of_structure_of_sequence_no_bound)
 {
-    SequenceType s(primitive_type<uint32_t>()) ;
+    SequenceType s(primitive_type<uint32_t>());
     StructType the_str("check");
-    the_str.add_member(Member("int", s)) ;
+    the_str.add_member(Member("int", s));
     StructType other_str("other_check");
-    other_str.add_member(Member("int", s)) ;
+    other_str.add_member(Member("int", s));
     EXPECT_EQ(true , the_str.is_subset_of(other_str));
     EXPECT_EQ(true , other_str.is_subset_of(the_str));
 }
 
 TEST (DynamicType, testing_is_subset_of_structure_of_sequence_different_bound)
 {
-    SequenceType s(primitive_type<uint32_t>(),15) ;
-    SequenceType r(primitive_type<uint32_t>(),19) ;
+    SequenceType s(primitive_type<uint32_t>(),15);
+    SequenceType r(primitive_type<uint32_t>(),19);
     StructType the_str("check");
-    the_str.add_member(Member("int", s)) ;
+    the_str.add_member(Member("int", s));
     StructType other_str("other_check");
-    other_str.add_member(Member("int", r)) ;
+    other_str.add_member(Member("int", r));
     EXPECT_EQ(true , the_str.is_subset_of(other_str));
     EXPECT_EQ(false , other_str.is_subset_of(the_str));
 }
 
 TEST (DynamicType, testing_is_subset_of_structure_of_sequence_same_bound)
 {
-    SequenceType s(primitive_type<uint32_t>(),15) ;
+    SequenceType s(primitive_type<uint32_t>(),15);
     StructType the_str("check");
-    the_str.add_member(Member("int", s)) ;
+    the_str.add_member(Member("int", s));
     StructType other_str("other_check");
-    other_str.add_member(Member("int", s)) ;
+    other_str.add_member(Member("int", s));
     EXPECT_EQ(true , the_str.is_subset_of(other_str));
     EXPECT_EQ(true , other_str.is_subset_of(the_str));
 }
@@ -685,9 +685,9 @@ TEST (DynamicType, testing_is_subset_of_structure_of_sequence_same_bound)
 TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_int)
 {
     StructType the_str("check");
-    the_str.add_member(Member("int", primitive_type<uint32_t>())) ;
+    the_str.add_member(Member("int", primitive_type<uint32_t>()));
     StructType other_str("other_check");
-    other_str.add_member(Member("int", primitive_type<uint32_t>())) ;
+    other_str.add_member(Member("int", primitive_type<uint32_t>()));
     EXPECT_EQ(true , the_str.is_subset_of(other_str));
     EXPECT_EQ(true , other_str.is_subset_of(the_str));
 }
@@ -695,9 +695,9 @@ TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_int)
 TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_float)
 {
     StructType the_str("check");
-    the_str.add_member(Member("int", primitive_type<long double>())) ;
+    the_str.add_member(Member("int", primitive_type<long double>()));
     StructType other_str("other_check");
-    other_str.add_member(Member("int", primitive_type<long double>())) ;
+    other_str.add_member(Member("int", primitive_type<long double>()));
     EXPECT_EQ(true , the_str.is_subset_of(other_str));
     EXPECT_EQ(true , other_str.is_subset_of(the_str));
 }
@@ -705,11 +705,11 @@ TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_float)
 TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_char)
 {
     StructType the_str("check");
-    the_str.add_member(Member("int", primitive_type<char32_t>())) ;
+    the_str.add_member(Member("int", primitive_type<char32_t>()));
     StructType other_str("other_check");
-    other_str.add_member(Member("int", primitive_type<char32_t>())) ;
+    other_str.add_member(Member("int", primitive_type<char32_t>()));
     StructType another_str("another_check");
-    another_str.add_member(Member("int", primitive_type<char>())) ;
+    another_str.add_member(Member("int", primitive_type<char>()));
     EXPECT_EQ(true , the_str.is_subset_of(other_str));
     EXPECT_EQ(false, the_str.is_subset_of(another_str));
     EXPECT_EQ(true , other_str.is_subset_of(the_str));
@@ -721,11 +721,11 @@ TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_char)
 TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_int32_t)
 {
     StructType the_str("check");
-    the_str.add_member(Member("int", primitive_type<uint32_t>())) ;
+    the_str.add_member(Member("int", primitive_type<uint32_t>()));
     StructType other_str("other_check");
-    other_str.add_member(Member("int", primitive_type<uint32_t>())) ;
+    other_str.add_member(Member("int", primitive_type<uint32_t>()));
     StructType another_str("another_check");
-    another_str.add_member(Member("int", primitive_type<int32_t>())) ;
+    another_str.add_member(Member("int", primitive_type<int32_t>()));
     EXPECT_EQ(true , the_str.is_subset_of(other_str));
     EXPECT_EQ(false, the_str.is_subset_of(another_str));
     EXPECT_EQ(true , other_str.is_subset_of(the_str));
@@ -737,11 +737,11 @@ TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_int32_t)
 TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_mixed_int)
 {
     StructType the_str("check");
-    the_str.add_member(Member("int", primitive_type<uint16_t>())) ;
+    the_str.add_member(Member("int", primitive_type<uint16_t>()));
     StructType other_str("other_check");
-    other_str.add_member(Member("int", primitive_type<uint32_t>())) ;
+    other_str.add_member(Member("int", primitive_type<uint32_t>()));
     StructType another_str("another_check");
-    another_str.add_member(Member("int", primitive_type<int64_t>())) ;
+    another_str.add_member(Member("int", primitive_type<int64_t>()));
     EXPECT_EQ(false, the_str.is_subset_of(other_str));
     EXPECT_EQ(false, the_str.is_subset_of(another_str));
     EXPECT_EQ(false, other_str.is_subset_of(the_str));
@@ -753,10 +753,10 @@ TEST (DynamicType, testing_is_subset_of_structure_of_primitive_type_mixed_int)
 TEST (DynamicType, testing_is_subset_of_structure_of_array_same_bound)
 {
     StructType the_str("check");
-    ArrayType the_array(primitive_type<uint32_t>(), 10) ;
-    the_str.add_member(Member("arr", the_array)) ;
+    ArrayType the_array(primitive_type<uint32_t>(), 10);
+    the_str.add_member(Member("arr", the_array));
     StructType other_str("other_check");
-    other_str.add_member(Member("arr", the_array)) ;
+    other_str.add_member(Member("arr", the_array));
     EXPECT_EQ(true , the_str.is_subset_of(other_str));
     EXPECT_EQ(true , other_str.is_subset_of(the_str));
 }
@@ -786,142 +786,142 @@ TEST (DynamicType, testing_is_subset_of_structure_of_array_different_bound_and_t
 TEST (DynamicData, testing_equality_check_primitive_type)
 {
     {
-        DynamicData dd1(primitive_type<uint8_t>()) ;
-        DynamicData dd2(primitive_type<uint8_t>()) ;
+        DynamicData dd1(primitive_type<uint8_t>());
+        DynamicData dd2(primitive_type<uint8_t>());
         dd1.value(uint8_t(15));
         dd2.value(uint8_t(15));
-        EXPECT_EQ(dd1, dd2) ;
+        EXPECT_EQ(dd1, dd2);
         dd2.value(uint8_t(16));
-        EXPECT_NE(dd1, dd2) ;
+        EXPECT_NE(dd1, dd2);
     }
 
     {
-        DynamicData dd1(primitive_type<uint16_t>()) ;
-        DynamicData dd2(primitive_type<uint16_t>()) ;
+        DynamicData dd1(primitive_type<uint16_t>());
+        DynamicData dd2(primitive_type<uint16_t>());
         dd1.value(uint16_t(15));
         dd2.value(uint16_t(15));
-        EXPECT_EQ(dd1, dd2) ;
+        EXPECT_EQ(dd1, dd2);
         dd2.value(uint16_t(16));
-        EXPECT_NE(dd1, dd2) ;
+        EXPECT_NE(dd1, dd2);
     }
 
     {
-        DynamicData dd1(primitive_type<uint32_t>()) ;
-        DynamicData dd2(primitive_type<uint32_t>()) ;
+        DynamicData dd1(primitive_type<uint32_t>());
+        DynamicData dd2(primitive_type<uint32_t>());
         dd1.value(uint32_t(15));
         dd2.value(uint32_t(15));
-        EXPECT_EQ(dd1, dd2) ;
+        EXPECT_EQ(dd1, dd2);
         dd2.value(uint32_t(16));
-        EXPECT_NE(dd1, dd2) ;
+        EXPECT_NE(dd1, dd2);
     }
 
     {
-        DynamicData dd1(primitive_type<int32_t>()) ;
-        DynamicData dd2(primitive_type<int32_t>()) ;
+        DynamicData dd1(primitive_type<int32_t>());
+        DynamicData dd2(primitive_type<int32_t>());
         dd1.value(int32_t(15));
         dd2.value(int32_t(15));
-        EXPECT_EQ(dd1, dd2) ;
+        EXPECT_EQ(dd1, dd2);
         dd2.value(int32_t(16));
-        EXPECT_NE(dd1, dd2) ;
+        EXPECT_NE(dd1, dd2);
     }
 
     {   
-        DynamicData dd1(primitive_type<int16_t>()) ;
-        DynamicData dd2(primitive_type<int16_t>()) ;
+        DynamicData dd1(primitive_type<int16_t>());
+        DynamicData dd2(primitive_type<int16_t>());
         dd1.value(int16_t(15));
         dd2.value(int16_t(15));
-        EXPECT_EQ(dd1, dd2) ;
+        EXPECT_EQ(dd1, dd2);
         dd2.value(int16_t(16));
-        EXPECT_NE(dd1, dd2) ;
+        EXPECT_NE(dd1, dd2);
     }
 
     {
-        DynamicData dd1(primitive_type<uint64_t>()) ;
-        DynamicData dd2(primitive_type<uint64_t>()) ;
+        DynamicData dd1(primitive_type<uint64_t>());
+        DynamicData dd2(primitive_type<uint64_t>());
         dd1.value(uint64_t(15));
         dd2.value(uint64_t(15));
-        EXPECT_EQ(dd1, dd2) ;
+        EXPECT_EQ(dd1, dd2);
         dd2.value(uint64_t(16));
-        EXPECT_NE(dd1, dd2) ;
+        EXPECT_NE(dd1, dd2);
     }
 
     {
-        DynamicData dd1(primitive_type<int64_t>()) ;
-        DynamicData dd2(primitive_type<int64_t>()) ;
+        DynamicData dd1(primitive_type<int64_t>());
+        DynamicData dd2(primitive_type<int64_t>());
         dd1.value(int64_t(15));
         dd2.value(int64_t(15));
-        EXPECT_EQ(dd1, dd2) ;
+        EXPECT_EQ(dd1, dd2);
         dd2.value(int64_t(16));
-        EXPECT_NE(dd1, dd2) ;
+        EXPECT_NE(dd1, dd2);
     }
 
     {
-        DynamicData dd1(primitive_type<float>()) ;
-        DynamicData dd2(primitive_type<float>()) ;
+        DynamicData dd1(primitive_type<float>());
+        DynamicData dd2(primitive_type<float>());
         dd1.value(float(15.1));
         dd2.value(float(15.1));
-        EXPECT_EQ(dd1, dd2) ;
+        EXPECT_EQ(dd1, dd2);
         dd2.value(float(16.3));
-        EXPECT_NE(dd1, dd2) ;
+        EXPECT_NE(dd1, dd2);
     }
 
     {
-        DynamicData dd1(primitive_type<double>()) ;
-        DynamicData dd2(primitive_type<double>()) ;
+        DynamicData dd1(primitive_type<double>());
+        DynamicData dd2(primitive_type<double>());
         dd1.value(double(15.1));
         dd2.value(double(15.1));
-        EXPECT_EQ(dd1, dd2) ;
+        EXPECT_EQ(dd1, dd2);
         dd2.value(double(16.3));
-        EXPECT_NE(dd1, dd2) ;
+        EXPECT_NE(dd1, dd2);
     }
 
     {
-        DynamicData dd1(primitive_type<long double>()) ;
-        DynamicData dd2(primitive_type<long double>()) ;
-        long double d1 = 15.1 ;
+        DynamicData dd1(primitive_type<long double>());
+        DynamicData dd2(primitive_type<long double>());
+        long double d1 = 15.1;
         dd1.value(d1);
         dd2.value(d1);
-        EXPECT_EQ(dd1, dd2) ;
-        d1 = 16.3 ;
+        EXPECT_EQ(dd1, dd2);
+        d1 = 16.3;
         dd2.value(d1);
-        EXPECT_NE(dd1, dd2) ;
+        EXPECT_NE(dd1, dd2);
     }
 
     {
-        DynamicData dd1(primitive_type<char>()) ;
-        DynamicData dd2(primitive_type<char>()) ;
+        DynamicData dd1(primitive_type<char>());
+        DynamicData dd2(primitive_type<char>());
         dd1.value('d');
         dd2.value('d');
-        EXPECT_EQ(dd1, dd2) ;
+        EXPECT_EQ(dd1, dd2);
         dd2.value('f');
-        EXPECT_NE(dd1, dd2) ;
+        EXPECT_NE(dd1, dd2);
     }
 
     {
-        DynamicData dd1(primitive_type<char32_t>()) ;
-        DynamicData dd2(primitive_type<char32_t>()) ;
+        DynamicData dd1(primitive_type<char32_t>());
+        DynamicData dd2(primitive_type<char32_t>());
         dd1.value(char32_t(RAND_MAX));
         dd2.value(char32_t(RAND_MAX));
-        EXPECT_EQ(dd1, dd2) ;
+        EXPECT_EQ(dd1, dd2);
         dd2.value(char32_t(RAND_MAX - 1));
-        EXPECT_NE(dd1, dd2) ;
+        EXPECT_NE(dd1, dd2);
     }
 }
 
 TEST (DynamicData, testing_equality_check_string)
 {
-    SequenceType s(primitive_type<uint64_t>()) ;
+    SequenceType s(primitive_type<uint64_t>());
     DynamicData d1(s);
     DynamicData d2(s);
     d1.push<uint64_t>(3456); 
     d2.push<uint64_t>(3456); 
-    EXPECT_EQ(true , d1 == d2) ;
-    d2[0].value<uint64_t>(3457) ;
-    EXPECT_NE(d1, d2) ;
-    d2[0].value<uint64_t>(3456) ;
-    d2.push<uint64_t>(435) ;
-    cout << "d2: " << d2[1].value<uint64_t>() << endl ;
-    EXPECT_NE(d1, d2) ;
+    EXPECT_EQ(true , d1 == d2);
+    d2[0].value<uint64_t>(3457);
+    EXPECT_NE(d1, d2);
+    d2[0].value<uint64_t>(3456);
+    d2.push<uint64_t>(435);
+    cout << "d2: " << d2[1].value<uint64_t>() << endl;
+    EXPECT_NE(d1, d2);
 }
 
 TEST (DynamicData, test_equality_check_struct)
@@ -930,32 +930,32 @@ TEST (DynamicData, test_equality_check_struct)
     stru.add_member(Member("lld", primitive_type<long double>()));
 
     DynamicData d1(stru);
-    d1["lld"].value<long double>(3.1415926) ;
+    d1["lld"].value<long double>(3.1415926);
     DynamicData d2(stru);
-    d2["lld"].value<long double>(3.1415926) ;
-    EXPECT_EQ(d1, d2) ;
-    d2["lld"].value<long double>(3.1415925) ;
-    EXPECT_NE(d1, d2) ;
+    d2["lld"].value<long double>(3.1415926);
+    EXPECT_EQ(d1, d2);
+    d2["lld"].value<long double>(3.1415925);
+    EXPECT_NE(d1, d2);
 
-    stru.add_member(Member("c", primitive_type<char>())) ;
-    DynamicData d3(stru) ;
-    d3["lld"].value<long double>(3.1415926) ;
-    EXPECT_NE(d3, d1) ;
-    d3["c"].value<char>(3.1415926) ;
-    EXPECT_NE(d3, d1) ;
+    stru.add_member(Member("c", primitive_type<char>()));
+    DynamicData d3(stru);
+    d3["lld"].value<long double>(3.1415926);
+    EXPECT_NE(d3, d1);
+    d3["c"].value<char>(3.1415926);
+    EXPECT_NE(d3, d1);
 
 }
 #if(0)
 TEST (DynamicData, test_equality_complex_struct)
 {
-    StructType t1("t1"), t2("t2"), t3("t3") ;
-    StructType t4("t1"), t5("t2"), t6("t3") ;
-    DynamicData d1 = create_dynamic_data(3.1415926,t1, t2, t3 ) ;
-    DynamicData d2 = create_dynamic_data(3.141432,t4, t5, t6 ) ;
-    DynamicData d3 = d1 ;
-    EXPECT_NE(d1, d2) ;
+    StructType t1("t1"), t2("t2"), t3("t3");
+    StructType t4("t1"), t5("t2"), t6("t3");
+    DynamicData d1 = create_dynamic_data(3.1415926,t1, t2, t3 );
+    DynamicData d2 = create_dynamic_data(3.141432,t4, t5, t6 );
+    DynamicData d3 = d1;
+    EXPECT_NE(d1, d2);
     
-    EXPECT_EQ(d1, d3) ;
+    EXPECT_EQ(d1, d3);
 }
 #endif
 
@@ -963,42 +963,42 @@ namespace{
     template<typename T>
     ostream& operator << (ostream& o, const vector<T>& v)
     {
-        for(auto it = v.begin() ; it != v.end() ; ++it)
+        for(auto it = v.begin(); it != v.end(); ++it)
         {
-            o << '(' << *it << ')'  ;
+            o << '(' << *it << ')';
         }
-        return o ;
+        return o;
     }
 }
 TEST (DynamicData, test_equality_complex_struct)
 {
-    ArrayType ar(primitive_type<uint32_t>(), 15) ;
-    SequenceType se(primitive_type<uint32_t>(), 15) ;
-    StringType str ;
-    SequenceType seq(str, 15) ;
+    ArrayType ar(primitive_type<uint32_t>(), 15);
+    SequenceType se(primitive_type<uint32_t>(), 15);
+    StringType str;
+    SequenceType seq(str, 15);
     StructType st("the_type");
     st.add_member(Member("array", ar));
     st.add_member(Member("sequence", se));
     st.add_member(Member("seqstring", seq));
-    st.add_member(Member("string", str)) ;
+    st.add_member(Member("string", str));
     DynamicData d1(st);
-    d1["string"].string("sono io che sono qui") ;
+    d1["string"].string("sono io che sono qui");
 
-    for(int i=0 ; i < 15 ; ++i)
+    for(int i=0; i < 15; ++i)
     {
         d1["array"][i].value<uint32_t>(42);
         d1["sequence"].push<uint32_t>(42);
         d1["seqstring"].push<string>("ci sono anche io");
     }
-    vector<char> v = d1["string"].as_vector<char>() ;
-    vector<string> vv = d1["seqstring"].as_vector<string>() ;
-    vector<uint32_t> t = d1["array"].as_vector<uint32_t>() ;
-    vector<uint32_t> s = d1["sequence"].as_vector<uint32_t>() ;
+    vector<char> v = d1["string"].as_vector<char>();
+    vector<string> vv = d1["seqstring"].as_vector<string>();
+    vector<uint32_t> t = d1["array"].as_vector<uint32_t>();
+    vector<uint32_t> s = d1["sequence"].as_vector<uint32_t>();
     
-    cout << v << endl ;
-    cout << vv << endl ;
-    cout << t << endl ;
-    cout << s << endl ;
+    cout << v << endl;
+    cout << vv << endl;
+    cout << t << endl;
+    cout << s << endl;
 
 }
 
