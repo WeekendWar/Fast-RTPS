@@ -291,20 +291,19 @@ TEST (DynamicData, primitive_types)
 
     DynamicData d(st) ;
     
-    d["bool"].value(true);
-    d["uint8_t"].value(250);
-    d["int16_t"].value(-32760);
-    d["uint16_t"].value(65530); 
-    d["int32_t"].value(-2147483640); 
-    d["uint32_t"].value(4294967290);
-    d["int64_t"].value(-9223372036854775800);
-    d["uint64_t"].value(18446744073709551610ULL);
-    d["float"].value(3.1415927410125732421875f);   
-    d["double"].value(3.141592653589793115997963468544185161590576171875);
-    long double a = 3.14159265358979323851280895940618620443274267017841339111328125 ;
-    d["long double"] .value(a);
-    d["char"].value('f');
-    d["char32_t"].value(4294967290);
+    d["bool"].value<bool>(true);
+    d["uint8_t"].value<uint8_t>(250);
+    d["int16_t"].value<int16_t>(-32760);
+    d["uint16_t"].value<uint16_t>(65530); 
+    d["int32_t"].value<int32_t>(-2147483640); 
+    d["uint32_t"].value<uint32_t>(4294967290);
+    d["int64_t"].value<int64_t>(-9223372036854775800);
+    d["uint64_t"].value<uint64_t>(18446744073709551610ULL);
+    d["float"].value<float>(3.1415927410125732421875f);   
+    d["double"].value<double>(3.141592653589793115997963468544185161590576171875);
+    d["long double"].value<long double>(3.1415926535897932385);
+    d["char"].value<char>('f');
+    d["char32_t"].value<char32_t>(4294967290);
     
     EXPECT_EQ(true, d["bool"].value<bool>()); 
     EXPECT_EQ(250, d["uint8_t"].value<uint8_t>());
@@ -316,7 +315,7 @@ TEST (DynamicData, primitive_types)
     EXPECT_EQ(18446744073709551610ULL,d["uint64_t"].value<uint64_t>());
     EXPECT_EQ( float(3.1415927410125732421875) , d["float"].value<float>()) ;   
     EXPECT_EQ( double(3.141592653589793115997963468544185161590576171875) , d["double"].value<double>());
-    EXPECT_EQ( a , d["long double"].value<long double>());
+    EXPECT_EQ( 3.1415926535897932385 , d["long double"].value<long double>());
     EXPECT_EQ('f', d["char"].value<char>());
     EXPECT_EQ(4294967290, d["char32_t"].value<char32_t>());
 
@@ -368,7 +367,7 @@ TEST (DynamicData, test_just_for_luis)
         for(int i = 0; i < 2; i++)
         {
             DynamicData temp(temp_type);
-            temp["number"].value(i);
+            temp["number"].value<uint32_t>(i);
             temp["string"].value(std::to_string(i));
             fixed["inner"].push(temp);
          }
@@ -419,7 +418,7 @@ DynamicData ret_dyn_data(StructType &st, int i )
             break ;
         case 2:
             st.add_member(
-                Member("array", ArrayType(primitive_type<uint32_t>(), 100000000)));
+                Member("array", ArrayType(primitive_type<uint32_t>(), 10)));
             break ;
         default:
             break ;
@@ -430,8 +429,8 @@ DynamicData ret_dyn_data(StructType &st, int i )
             dt["int"].value<int32_t>(32);
             break ;
         case 2:
-            for(int j = 0 ; j < 10 ; ++j)
-            dt["array"][i].value<int32_t>(32);
+            for(size_t j = 0 ; j < 10 ; ++j)
+                dt["array"][i].value<uint32_t>(32);
             break ;
         default:
             break ;
