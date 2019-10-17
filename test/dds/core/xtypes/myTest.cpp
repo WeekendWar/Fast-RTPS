@@ -709,7 +709,6 @@ TEST (DynamicType, testing_is_compatible_structure_of_primitive_type_float)
 TEST (DynamicType, testing_is_compatible_structure_of_primitive_type_char)
 {
     StructType the_str("check");
-    the_str.add_member(Member("int", primitive_type<wchar_t>()));
     StructType other_str("other_check");
     other_str.add_member(Member("int", primitive_type<wchar_t>()));
     StructType another_str("another_check");
@@ -731,7 +730,6 @@ TEST (DynamicType, testing_is_compatible_structure_of_primitive_type_int32_t)
     other_str.add_member(Member("int", primitive_type<uint32_t>()));
     StructType another_str("another_check");
     another_str.add_member(Member("int", primitive_type<int32_t>()));
-    EXPECT_EQ(TypeConsistency::EQUALS , the_str.is_compatible(other_str));
     EXPECT_EQ(TypeConsistency::IGNORE_TYPE_SIGN, the_str.is_compatible(another_str));
     EXPECT_EQ(TypeConsistency::EQUALS , other_str.is_compatible(the_str));
     EXPECT_EQ(TypeConsistency::IGNORE_TYPE_SIGN, other_str.is_compatible(another_str));
@@ -761,8 +759,8 @@ TEST (DynamicType, testing_is_compatible_structure_of_array_same_bound)
     the_str.add_member(Member("arr", the_array));
     StructType other_str("other_check");
     other_str.add_member(Member("arr", the_array));
-    EXPECT_EQ(TypeConsistency::EQUALS , the_str.is_compatible(other_str));
-    EXPECT_EQ(TypeConsistency::EQUALS , other_str.is_compatible(the_str));
+    EXPECT_EQ(true , the_str.is_subset_of(other_str));
+    EXPECT_EQ(true , other_str.is_subset_of(the_str));
 }
 
 TEST (DynamicType, testing_is_compatible_structure_of_array_different_bound_and_type)
@@ -962,17 +960,6 @@ namespace{
     }
 }
 
-namespace{
-    template<typename T>
-    ostream& operator << (ostream& o, const vector<T>& v)
-    {
-        for(auto it = v.begin() ; it != v.end() ; ++it)
-        {
-            o << '(' << *it << ')'  ;
-        }
-        return o ;
-    }
-}
 TEST (DynamicData, test_equality_complex_struct)
 {
     ArrayType ar(primitive_type<uint32_t>(), 15);
