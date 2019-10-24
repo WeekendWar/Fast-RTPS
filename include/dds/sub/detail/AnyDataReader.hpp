@@ -20,6 +20,8 @@
 
 #include <fastdds/dds/topic/DataReader.hpp>
 
+#include <dds/sub/Subscriber.hpp>
+
 /**
  * @cond
  * Ignore this file in the API

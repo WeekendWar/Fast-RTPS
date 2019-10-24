@@ -48,7 +48,7 @@ Subscriber::Subscriber(
 }
 
 Subscriber::Subscriber(
-        const detail::Subscriber& /* sub*/)
+        detail::Subscriber* /* sub*/)
 {
 }
 

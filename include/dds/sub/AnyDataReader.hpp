@@ -375,6 +375,9 @@ public:
      */
     dds::core::status::SubscriptionMatchedStatus subscription_matched_status();
 
+public:
+    mutable Subscriber* subscriber_;
+
 };
 
 } //namespace sub

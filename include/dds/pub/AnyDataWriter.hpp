@@ -357,6 +357,9 @@ public:
      */
     void assert_liveliness();
 
+public:
+    mutable Publisher* publisher_;
+
 };
 
 } //namespace pub

@@ -35,7 +35,8 @@ AnyDataReader::~AnyDataReader()
 
 const Subscriber& AnyDataReader::subscriber() const
 {
-    return *delegate()->get_subscriber();
+    subscriber_ = (Subscriber*) delegate()->get_subscriber();
+    return *this->subscriber_;
 }
 
 const dds::topic::TopicDescription& AnyDataReader::topic_description() const

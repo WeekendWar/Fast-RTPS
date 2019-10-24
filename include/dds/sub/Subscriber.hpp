@@ -110,7 +110,7 @@ public:
             const dds::core::status::StatusMask& mask = dds::core::status::StatusMask::none());
 
     Subscriber(
-            const detail::Subscriber& sub);
+            detail::Subscriber* sub);
 
     /** @cond */
     virtual ~Subscriber();

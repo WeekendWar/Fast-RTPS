@@ -37,8 +37,8 @@ AnyDataWriter::~AnyDataWriter()
 
 const dds::pub::Publisher& AnyDataWriter::publisher() const
 {
-    //return delegate()->get_publisher();
-    return dds::core::null;
+    publisher_ = (Publisher*) delegate()->get_publisher();
+    return *this->publisher_;
 }
 
 const dds::topic::TopicDescription& AnyDataWriter::topic_description() const
