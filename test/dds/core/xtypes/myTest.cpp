@@ -759,8 +759,8 @@ TEST (DynamicType, testing_is_compatible_structure_of_array_same_bound)
     the_str.add_member(Member("arr", the_array));
     StructType other_str("other_check");
     other_str.add_member(Member("arr", the_array));
-    EXPECT_EQ(true , the_str.is_subset_of(other_str));
-    EXPECT_EQ(true , other_str.is_subset_of(the_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , the_str.is_compatible(other_str));
+    EXPECT_EQ(TypeConsistency::EQUALS , other_str.is_compatible(the_str));
 }
 
 TEST (DynamicType, testing_is_compatible_structure_of_array_different_bound_and_type)
@@ -1257,7 +1257,6 @@ TEST (QoS, ignore_member)
     EXPECT_EQ(TypeConsistency::IGNORE_MEMBERS , a.is_compatible(b));
     
 }
-
 int main() 
 {
     testing::InitGoogleTest();
