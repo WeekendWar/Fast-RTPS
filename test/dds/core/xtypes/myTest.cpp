@@ -709,6 +709,7 @@ TEST (DynamicType, testing_is_compatible_structure_of_primitive_type_float)
 TEST (DynamicType, testing_is_compatible_structure_of_primitive_type_char)
 {
     StructType the_str("check");
+    the_str.add_member(Member("int", primitive_type<wchar_t>()));
     StructType other_str("other_check");
     other_str.add_member(Member("int", primitive_type<wchar_t>()));
     StructType another_str("another_check");
@@ -1236,7 +1237,7 @@ TEST (QoS, mixed_types)
 
 }
 
-TEST (QoS, ignore_member)
+TEST (QoS, ignore_member_primitive)
 {
     StructType a("composition");
     StructType b("composition");
@@ -1257,6 +1258,74 @@ TEST (QoS, ignore_member)
     EXPECT_EQ(TypeConsistency::IGNORE_MEMBERS , a.is_compatible(b));
     
 }
+
+TEST (QoS, ignore_member_string)
+{
+    StructType a("composition");
+    StructType b("composition");
+    StringType string(10);
+    SequenceType seq(primitive_type<uint32_t>(), 10);
+    ArrayType arr(primitive_type<uint16_t>(), 10);
+    a.add_member(
+            Member("string", string)).add_member(
+            Member("seq", seq)).add_member(
+            Member("arr", arr)).add_member(
+            Member("another_string", string));
+    
+    b.add_member(
+            Member("string", string)).add_member(
+            Member("seq", seq)).add_member(
+            Member("arr", arr));
+
+    EXPECT_EQ(TypeConsistency::IGNORE_MEMBERS , a.is_compatible(b));
+    
+}
+
+TEST (QoS, ignore_member_sequence)
+{
+    StructType a("composition");
+    StructType b("composition");
+    StringType string(10);
+    SequenceType seq(primitive_type<uint32_t>(), 10);
+    ArrayType arr(primitive_type<uint16_t>(), 10);
+    a.add_member(
+            Member("string", string)).add_member(
+            Member("seq", seq)).add_member(
+            Member("arr", arr)).add_member(
+            Member("another_sequence", seq));
+    
+    b.add_member(
+            Member("string", string)).add_member(
+            Member("seq", seq)).add_member(
+            Member("arr", arr));
+
+    EXPECT_EQ(TypeConsistency::IGNORE_MEMBERS , a.is_compatible(b));
+    
+}
+
+TEST (QoS, ignore_member_array)
+{
+    StructType a("composition");
+    StructType b("composition");
+    StringType string(10);
+    SequenceType seq(primitive_type<uint32_t>(), 10);
+    ArrayType arr(primitive_type<uint16_t>(), 10);
+    a.add_member(
+            Member("string", string)).add_member(
+            Member("seq", seq)).add_member(
+            Member("arr", arr)).add_member(
+            Member("another_array", arr));
+    
+    b.add_member(
+            Member("string", string)).add_member(
+            Member("seq", seq)).add_member(
+            Member("arr", arr));
+
+    EXPECT_EQ(TypeConsistency::IGNORE_MEMBERS , a.is_compatible(b));
+    
+}
+
+
 int main() 
 {
     testing::InitGoogleTest();
