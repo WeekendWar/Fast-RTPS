@@ -1241,6 +1241,7 @@ TEST (QoS, ignore_member_primitive)
 {
     StructType a("composition");
     StructType b("composition");
+    
     StringType string(10);
     SequenceType seq(primitive_type<uint32_t>(), 10);
     ArrayType arr(primitive_type<uint16_t>(), 10);
@@ -1325,6 +1326,20 @@ TEST (QoS, ignore_member_array)
     
 }
 
+TEST (QoS, ignore_member_simple_primitive)
+{
+    StructType a("composition");
+    StructType b("composition");
+    a.add_member(
+            Member("x", primitive_type<char>())).add_member(
+            Member("y", primitive_type<char>()));
+    
+    b.add_member(
+            Member("x", primitive_type<char>()));
+
+    EXPECT_EQ(TypeConsistency::IGNORE_MEMBERS , a.is_compatible(b));
+    
+}
 
 int main() 
 {
