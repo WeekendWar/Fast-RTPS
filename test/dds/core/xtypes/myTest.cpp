@@ -1341,8 +1341,8 @@ TEST (QoS, ignore_member_simple_primitive)
     
 }
 
-int main() 
+int main(int argc, char** argv) 
 {
-    testing::InitGoogleTest();
+    testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }

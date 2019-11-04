@@ -25,18 +25,12 @@ if(GTEST_FOUND)
     include_directories(${ASIO_INCLUDE_DIR})        
 
     include_directories(${PROJECT_SOURCE_DIR}/include)        
-	set(SOURCE ${PROJECT_SOURCE_DIR}/include/dds/core/xtypes/*.hpp)
+    set(SOURCE ${PROJECT_SOURCE_DIR}/include/dds/core/xtypes/*.hpp)
 				
-	set(XTYPES_PRIME_TEST_SOURCE myTest.cpp)
+    set(XTYPES_TEST_SOURCE myTest.cpp)
 	
-    set(XTYPES_SECOND_TEST_SOURCE elapsedTimeCheck.cpp)
 
-	add_executable(myTest ${XTYPES_PRIME_TEST_SOURCE})
-	add_executable(elapsedTimeCheck ${XTYPES_SECOND_TEST_SOURCE})
-
-	target_link_libraries(myTest ${GTEST_LIBRARIES})
-	target_link_libraries(elapsedTimeCheck ${GTEST_LIBRARIES})
-
-#	add_xtypes_gtest(myTest SOURCES ${XTYPES_TESTS_SOURCE})
+    add_executable(myTest ${XTYPES_TEST_SOURCE})
+    target_link_libraries(myTest ${GTEST_LIBRARIES})
 
 endif()
