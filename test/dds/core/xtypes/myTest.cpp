@@ -22,23 +22,6 @@
 using namespace std; 
 using namespace dds::core::xtypes;
 
-#define DEBUG_MACRO_OFF
-
-
-#ifdef DEBUG_MACRO_ON 
-    size_t debug_count = 0; 
-    void debug(bool do_it=true) 
-    { 
-        if(do_it) 
-        { 
-            cout << "got up to: " << debug_count << endl; 
-            ++debug_count; 
-        } 
-    }
-#else
-    void debug(bool do_it=true){}
-#endif                
-
  /********************************
  *        DynamicType Tests        *
  ********************************/
@@ -211,54 +194,6 @@ TEST (StructType, type_verify_test)
     EXPECT_NE(0, uint32_t(TypeKind::PRIMITIVE_TYPE) & uint32_t(st.member("char16_t").type().kind()));
     EXPECT_NE(0, uint32_t(TypeKind::STRUCTURE_TYPE) & uint32_t(st.kind()));
 
-}
-
-TEST (StructMember, base_methods_check)
-{
-    StructType st("struct_name");
-    st.add_member(
-        Member("long_double", primitive_type<long double>())).add_member(
-        Member("uint64_t", primitive_type<uint64_t>())).add_member(
-        Member("uint8_t", primitive_type<uint8_t>()));    
-    StructMember sm("struct_member_name", st);
-
-    EXPECT_EQ("struct_member_name", sm.name());
-    EXPECT_EQ("struct_name", sm.type().name());
-    EXPECT_EQ(false, sm.has_id());
-    sm.id(8);
-    EXPECT_EQ(true, sm.has_id());
-    EXPECT_EQ(8, sm.get_id());
-    EXPECT_EQ(false, sm.is_key());
-    sm.key(true);
-    EXPECT_EQ(true, sm.is_key());
-    EXPECT_EQ(false, sm.is_optional());
-    sm.optional(true);
-    EXPECT_EQ(true, sm.is_optional());
-    EXPECT_EQ(false, sm.is_bitset());
-    sm.bitset(true);
-    EXPECT_EQ(true, sm.is_bitset());
-    EXPECT_EQ(0, st.member("long_double").offset());
-}
-
-TEST (StructMember, cascade_builder_with_qualifiers)
-{
-    StructType st("struct_name");
-    st.add_member(StructMember("struct_member_name", StructType("inner_struct_name").add_member(
-        Member("long_double", primitive_type<long double>())).add_member(
-        Member("uint64_t", primitive_type<uint64_t>())).add_member(
-        Member("uint8_t", primitive_type<uint8_t>()
-            ).key(true).bitset(true).id(9))
-        ).id(11).optional(true));
-    
-    EXPECT_EQ(true, st.member("struct_member_name").is_optional());
-    EXPECT_EQ(true, st.member("struct_member_name").has_id());
-    EXPECT_EQ(11, st.member("struct_member_name").get_id());
-
-    const StructType &in = static_cast<const StructType&>(st.member("struct_member_name").type());
-
-    EXPECT_EQ(true, in.member("uint8_t").has_id());
-    EXPECT_EQ(9, in.member("uint8_t").get_id());
-    EXPECT_EQ(true, in.member("uint8_t").is_key());
 }
 
 TEST (DynamicData, primitive_types)
@@ -541,29 +476,17 @@ TEST (DynamicData, cascade_construction)
     
     DynamicData the_data = create_dynamic_data(pi, the_struct, inner_struct, second_inner_struct);
 
-    debug(false);
     EXPECT_EQ(45350234, the_data["uint32_t"].value<uint32_t>());
-    debug(false);
     EXPECT_EQ(-5469372, the_data["int32_t"].value<int32_t>()); 
-    debug(false);
     EXPECT_EQ(784, the_data["uint16_t"].value<uint16_t>());
-    debug(false);
     EXPECT_EQ(-784, the_data["int16_t"].value<int16_t>()); 
-    debug(false);
     EXPECT_EQ(true, the_data["bool"].value<bool>());
-    debug(false);
     EXPECT_EQ(230, the_data["uint8_t"].value<uint8_t>());
-    debug(false);
     EXPECT_EQ(-1234523556, the_data["int64_t"].value<int64_t>()); 
-    debug(false);
     EXPECT_EQ(1234523556, the_data["uint64_t"].value<uint64_t>());
-    debug(false);
     EXPECT_EQ(3.1415926f, the_data["float"].value<float>()); 
-    debug(false);
     EXPECT_EQ(-3.14159264, the_data["double"].value<double>()); 
-    debug(false);
     EXPECT_EQ(pi, the_data["long_double"].value<long double>());
-    debug(false);
 
     srand48(time(0));
     
@@ -585,9 +508,7 @@ TEST (DynamicData, cascade_construction)
         long double check_over = 3.1415;
         EXPECT_EQ(check_over, the_data["array"][arr_idx_3][arr_idx_2].value<long double>());
         EXPECT_EQ(uint8_t(56), the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_array"][arr_idx_1].value<uint8_t>());
-        debug(false);
     }    
-    debug(); //100
 }
 
 TEST (DynamicData, curious_interactions)
@@ -909,6 +830,31 @@ TEST (DynamicData, testing_equality_check_primitive_type)
         dd2.value(char16_t(RAND_MAX - 1));
         EXPECT_NE(dd1, dd2);
     }
+    
+    {
+        DynamicData dd1(primitive_type<double>());
+        DynamicData dd2(primitive_type<long double>());
+        long double d1 = 15.1;
+        dd1.value<double>(15.1);
+        dd2.value(d1);
+        EXPECT_EQ(dd1, dd2);
+        d1 = 16.3;
+        dd2.value(d1);
+        EXPECT_NE(dd1, dd2);
+    }
+
+    {
+        DynamicData dd1(primitive_type<long double>());
+        DynamicData dd2(primitive_type<uint32_t>());
+        long double d1 = 15;
+        dd1.value(d1);
+        dd2.value<uint32_t>(15);
+        EXPECT_EQ(dd1, dd2);
+        d1 = 16.3;
+        dd1.value(d1);
+        EXPECT_NE(dd1, dd2);
+    }
+
 }
 
 TEST (DynamicData, testing_equality_check_string)
