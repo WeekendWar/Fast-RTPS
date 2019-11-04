@@ -22,7 +22,28 @@
 using namespace std; 
 using namespace dds::core::xtypes;
 
- /********************************
+
+#define UINT8 250
+#define INT16 -32760
+#define UINT16 65530 
+#define INT32 -2147483640
+#define UINT32 4294967290
+#define INT64 -9223372036854775800
+#define UINT64 18446744073709551610ULL
+#define FLOAT 3.1415927410125732421875f
+#define DOUBLE 3.1415926535897931159979631875
+#define LDOUBLE 3.14159265358979321159979631875
+#define CHAR 'f'
+#define WCHAR 34590
+
+#define INNER_STRING_VALUE "lay_down_and_cry" 
+#define INNER_SEQUENCE_STRING "another_prick_in_the_wall"
+#define SECOND_INNER_STRING "paint_it_black"
+
+#define STRUCTS_SIZE 1E1
+#define CHECKS_NUMBER 1E2
+
+/********************************
  *        DynamicType Tests        *
  ********************************/
 
@@ -230,34 +251,36 @@ TEST (DynamicData, primitive_types)
     EXPECT_EQ(TypeKind::STRUCTURE_TYPE, st.kind());
 
     DynamicData d(st);
-    
+
+
     d["bool"].value<bool>(true);
-    d["uint8_t"].value<uint8_t>(250);
-    d["int16_t"].value<int16_t>(-32760);
-    d["uint16_t"].value<uint16_t>(65530); 
-    d["int32_t"].value<int32_t>(-2147483640); 
-    d["uint32_t"].value<uint32_t>(4294967290);
-    d["int64_t"].value<int64_t>(-9223372036854775800);
-    d["uint64_t"].value<uint64_t>(18446744073709551610ULL);
-    d["float"].value<float>(3.1415927410125732421875f);   
-    d["double"].value<double>(3.141592653589793115997963468544185161590576171875);
-    d["long double"].value<long double>(3.1415926535897932385);
-    d["char"].value<char>('f');
-    d["char16_t"].value<wchar_t>(34590);
+    d["uint8_t"].value<uint8_t>(UINT8);
+    d["int16_t"].value<int16_t>(INT16);
+    d["uint16_t"].value<uint16_t>(UINT16); 
+    d["int32_t"].value<int32_t>(INT32); 
+    d["uint32_t"].value<uint32_t>(UINT32);
+    d["int64_t"].value<int64_t>(INT64);
+    d["uint64_t"].value<uint64_t>(UINT64);
+    d["float"].value<float>(FLOAT);   
+    d["double"].value<double>(DOUBLE);
+    d["long double"].value<long double>(LDOUBLE);
+    d["char"].value<char>(CHAR);
+    d["char16_t"].value<wchar_t>(WCHAR);
     
     EXPECT_EQ(true, d["bool"].value<bool>()); 
-    EXPECT_EQ(250, d["uint8_t"].value<uint8_t>());
-    EXPECT_EQ(-32760, d["int16_t"].value<int16_t>());
-    EXPECT_EQ(65530,d["uint16_t"].value<uint16_t>()); 
-    EXPECT_EQ(-2147483640, d["int32_t"].value<int32_t>()); 
-    EXPECT_EQ(4294967290, d["uint32_t"].value<uint32_t>());
-    EXPECT_EQ(-9223372036854775800, d["int64_t"].value<int64_t>());
-    EXPECT_EQ(18446744073709551610ULL,d["uint64_t"].value<uint64_t>());
-    EXPECT_EQ( float(3.1415927410125732421875) , d["float"].value<float>());   
-    EXPECT_EQ( double(3.141592653589793115997963468544185161590576171875) , d["double"].value<double>());
-    EXPECT_EQ( 3.1415926535897932385 , d["long double"].value<long double>());
-    EXPECT_EQ('f', d["char"].value<char>());
-    EXPECT_EQ(34590, d["char16_t"].value<wchar_t>());
+    EXPECT_EQ(UINT8, d["uint8_t"].value<uint8_t>());
+    EXPECT_EQ(INT16, d["int16_t"].value<int16_t>());
+    EXPECT_EQ(UINT16,d["uint16_t"].value<uint16_t>()); 
+    EXPECT_EQ(INT32, d["int32_t"].value<int32_t>()); 
+    EXPECT_EQ(UINT32, d["uint32_t"].value<uint32_t>());
+    EXPECT_EQ(INT64, d["int64_t"].value<int64_t>());
+    EXPECT_EQ(UINT64,d["uint64_t"].value<uint64_t>());
+    EXPECT_EQ( float(FLOAT) , d["float"].value<float>());   
+    EXPECT_EQ( double(DOUBLE) , d["double"].value<double>());
+    long double ld = LDOUBLE;
+    EXPECT_EQ( ld , d["long double"].value<long double>());
+    EXPECT_EQ( CHAR , d["char"].value<char>());
+    EXPECT_EQ( WCHAR , d["char16_t"].value<wchar_t>());
 
 }
 
@@ -410,47 +433,44 @@ DynamicData create_dynamic_data(long double pi, StructType& the_struct, StructTy
                 
     DynamicData the_data(the_struct);
     the_data["bool"].value(true);
-    the_data["uint8_t"].value(uint8_t(230));
-    the_data["int16_t"].value<>(int16_t(-784));
-    the_data["uint16_t"].value<>(uint16_t(784));
-    the_data["int32_t"].value<>(int32_t(-5469372));
-    the_data["uint32_t"].value<>(uint32_t(45350234));
-    the_data["int64_t"].value<>(int64_t(-1234523556));
-    the_data["uint64_t"].value<>(uint64_t(1234523556));
-    the_data["float"].value<>(float(3.1415926));
-    the_data["double"].value<>(double(-3.14159264));
+    the_data["uint8_t"].value<uint8_t>(UINT8);
+    the_data["int16_t"].value<int16_t>(INT16);
+    the_data["uint16_t"].value<uint16_t>(UINT16);
+    the_data["int32_t"].value<int32_t>(INT32);
+    the_data["uint32_t"].value<uint32_t>(UINT32);
+    the_data["int64_t"].value<int64_t>(INT64);
+    the_data["uint64_t"].value<uint64_t>(UINT64);
+    the_data["float"].value<float>(FLOAT);
+    the_data["double"].value<double>(DOUBLE);
                 
     the_data["long_double"].value<>(pi);
 
-    for(int i = 0; i < 1E1; ++i) // creating "sequence"
+    for(int i = 0; i < STRUCTS_SIZE; ++i) // creating "sequence"
     {
         DynamicData tmp_data(inner_struct);
-        tmp_data["inner_string"].string("lay_down_and_cry");
-        tmp_data["inner_float"].value(float(3.1415));
-        for (int j = 0; j < 1E1; ++j) // creating "sequence.inner_sequence_string"
+        tmp_data["inner_string"].string(INNER_STRING_VALUE);
+        tmp_data["inner_float"].value<float>(FLOAT);
+        for (int j = 0; j < STRUCTS_SIZE; ++j) // creating "sequence.inner_sequence_string"
         {
-//          StringType s;
-//            DynamicData dst(s);
-//            dst.string("another_prick_in_the_world");
-            tmp_data["inner_sequence_string"].push<string>("another_prick_in_the_world");
+            tmp_data["inner_sequence_string"].push<string>(INNER_SEQUENCE_STRING);
         }
                                 
-        for (int j = 0; j < 1E1; ++j) // creating "sequence.inner_sequence_struct"
+        for (int j = 0; j < STRUCTS_SIZE; ++j) // creating "sequence.inner_sequence_struct"
         {
             DynamicData tmp_inner_data(second_inner_struct);
-            tmp_inner_data["second_inner_string"].string("paint_it_black");
-            tmp_inner_data["second_inner_uint32_t"].value<>(uint32_t(38));
-            for(int k = 0; k < 1E1; ++k) //creating "sequence.inner_sequence_struct.second_inner_array"
+            tmp_inner_data["second_inner_string"].string(SECOND_INNER_STRING);
+            tmp_inner_data["second_inner_uint32_t"].value<uint32_t>(UINT32);
+            for(int k = 0; k < STRUCTS_SIZE; ++k) //creating "sequence.inner_sequence_struct.second_inner_array"
             {
-                tmp_inner_data["second_inner_array"][k].value<uint8_t>(56);
+                tmp_inner_data["second_inner_array"][k].value<uint8_t>(UINT8);
             }
             tmp_data["inner_sequence_struct"].push(tmp_inner_data);
         }
-        for(int j = 0; j < 1E1; ++j)
+        for(int j = 0; j < STRUCTS_SIZE; ++j)
         {
-            for(int k = 0; k < 1E1; ++k)
+            for(int k = 0; k < STRUCTS_SIZE; ++k)
             {
-                the_data["array"][j][k].value<long double>(3.1415);
+                the_data["array"][j][k].value<long double>(LDOUBLE);
             }
         }
         the_data["sequence"].push(tmp_data);
@@ -461,45 +481,45 @@ DynamicData create_dynamic_data(long double pi, StructType& the_struct, StructTy
 
 TEST (DynamicData, cascade_construction)
 {
-    long double pi = 3.14159265358979323846;
+    long double pi = LDOUBLE ;
     StructType the_struct("the_struct");
     StructType inner_struct("inner_struct");
     StructType second_inner_struct("second_inner_struct");
     
     DynamicData the_data = create_dynamic_data(pi, the_struct, inner_struct, second_inner_struct);
 
-    EXPECT_EQ(45350234, the_data["uint32_t"].value<uint32_t>());
-    EXPECT_EQ(-5469372, the_data["int32_t"].value<int32_t>()); 
-    EXPECT_EQ(784, the_data["uint16_t"].value<uint16_t>());
-    EXPECT_EQ(-784, the_data["int16_t"].value<int16_t>()); 
+    EXPECT_EQ(UINT32, the_data["uint32_t"].value<uint32_t>());
+    EXPECT_EQ(INT32, the_data["int32_t"].value<int32_t>()); 
+    EXPECT_EQ(UINT16, the_data["uint16_t"].value<uint16_t>());
+    EXPECT_EQ(INT16, the_data["int16_t"].value<int16_t>()); 
     EXPECT_EQ(true, the_data["bool"].value<bool>());
-    EXPECT_EQ(230, the_data["uint8_t"].value<uint8_t>());
-    EXPECT_EQ(-1234523556, the_data["int64_t"].value<int64_t>()); 
-    EXPECT_EQ(1234523556, the_data["uint64_t"].value<uint64_t>());
-    EXPECT_EQ(3.1415926f, the_data["float"].value<float>()); 
-    EXPECT_EQ(-3.14159264, the_data["double"].value<double>()); 
+    EXPECT_EQ(UINT8, the_data["uint8_t"].value<uint8_t>());
+    EXPECT_EQ(INT64, the_data["int64_t"].value<int64_t>()); 
+    EXPECT_EQ(UINT64, the_data["uint64_t"].value<uint64_t>());
+    EXPECT_EQ(FLOAT, the_data["float"].value<float>()); 
+    EXPECT_EQ(DOUBLE, the_data["double"].value<double>()); 
     EXPECT_EQ(pi, the_data["long_double"].value<long double>());
 
     srand48(time(0));
-    
-    for (int i = 0; i < 1E2; ++i)
+
+    for (int i = 0; i < CHECKS_NUMBER ; ++i)
     {
-        size_t idx_4 = lrand48()%int(1E1);
-        EXPECT_EQ("lay_down_and_cry", the_data["sequence"][idx_4]["inner_string"].string());
-        EXPECT_EQ(3.1415f, the_data["sequence"][idx_4]["inner_float"].value<float>());
-        size_t idx_3 = lrand48()%int(1E1);
-        EXPECT_EQ("another_prick_in_the_world", the_data["sequence"][idx_4]["inner_sequence_string"][idx_3].string());
-        size_t idx_2 = lrand48()%int(1E1);
-        EXPECT_EQ("paint_it_black", the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_string"].string());
-        EXPECT_EQ(38, the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_uint32_t"].value<uint32_t>());
+        size_t idx_4 = lrand48()%int(STRUCTS_SIZE);
+        EXPECT_EQ(INNER_STRING_VALUE, the_data["sequence"][idx_4]["inner_string"].string());
+        EXPECT_EQ(FLOAT, the_data["sequence"][idx_4]["inner_float"].value<float>());
+        size_t idx_3 = lrand48()%int(STRUCTS_SIZE);
+        EXPECT_EQ(INNER_SEQUENCE_STRING, the_data["sequence"][idx_4]["inner_sequence_string"][idx_3].string());
+        size_t idx_2 = lrand48()%int(STRUCTS_SIZE);
+        EXPECT_EQ(SECOND_INNER_STRING, the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_string"].string());
+        EXPECT_EQ(UINT32, the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_uint32_t"].value<uint32_t>());
                 
-        size_t arr_idx_3 = lrand48()%int(1E1);
-        size_t arr_idx_2 = lrand48()%int(1E1);
-        size_t arr_idx_1 = lrand48()%int(1E1);
+        size_t arr_idx_3 = lrand48()%int(STRUCTS_SIZE);
+        size_t arr_idx_2 = lrand48()%int(STRUCTS_SIZE);
+        size_t arr_idx_1 = lrand48()%int(STRUCTS_SIZE);
                                 
-        long double check_over = 3.1415;
+        long double check_over = LDOUBLE;
         EXPECT_EQ(check_over, the_data["array"][arr_idx_3][arr_idx_2].value<long double>());
-        EXPECT_EQ(uint8_t(56), the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_array"][arr_idx_1].value<uint8_t>());
+        EXPECT_EQ(UINT8, the_data["sequence"][idx_4]["inner_sequence_struct"][idx_2]["second_inner_array"][arr_idx_1].value<uint8_t>());
     }    
 }
 
@@ -697,154 +717,35 @@ TEST (DynamicType, testing_is_compatible_structure_of_array_different_bound_and_
     EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS | TypeConsistency::IGNORE_TYPE_SIGN, another_str.is_compatible(other_str));
 }
 
+template <typename A, typename B>
+void singleCheck(void)
+{
+        DynamicData dd1(primitive_type<A>());
+        DynamicData dd2(primitive_type<B>());
+        dd1.value(A(15));
+        dd2.value(B(15));
+        EXPECT_EQ(dd1, dd2);
+        dd2.value(B(16.3));
+        EXPECT_NE(dd1, dd2);
+}
+
 TEST (DynamicData, testing_equality_check_primitive_type)
 {
-    {
-        DynamicData dd1(primitive_type<uint8_t>());
-        DynamicData dd2(primitive_type<uint8_t>());
-        dd1.value(uint8_t(15));
-        dd2.value(uint8_t(15));
-        EXPECT_EQ(dd1, dd2);
-        dd2.value(uint8_t(16));
-        EXPECT_NE(dd1, dd2);
-    }
-
-    {
-        DynamicData dd1(primitive_type<uint16_t>());
-        DynamicData dd2(primitive_type<uint16_t>());
-        dd1.value(uint16_t(15));
-        dd2.value(uint16_t(15));
-        EXPECT_EQ(dd1, dd2);
-        dd2.value(uint16_t(16));
-        EXPECT_NE(dd1, dd2);
-    }
-
-    {
-        DynamicData dd1(primitive_type<uint32_t>());
-        DynamicData dd2(primitive_type<uint32_t>());
-        dd1.value(uint32_t(15));
-        dd2.value(uint32_t(15));
-        EXPECT_EQ(dd1, dd2);
-        dd2.value(uint32_t(16));
-        EXPECT_NE(dd1, dd2);
-    }
-
-    {
-        DynamicData dd1(primitive_type<int32_t>());
-        DynamicData dd2(primitive_type<int32_t>());
-        dd1.value(int32_t(15));
-        dd2.value(int32_t(15));
-        EXPECT_EQ(dd1, dd2);
-        dd2.value(int32_t(16));
-        EXPECT_NE(dd1, dd2);
-    }
-
-    {   
-        DynamicData dd1(primitive_type<int16_t>());
-        DynamicData dd2(primitive_type<int16_t>());
-        dd1.value(int16_t(15));
-        dd2.value(int16_t(15));
-        EXPECT_EQ(dd1, dd2);
-        dd2.value(int16_t(16));
-        EXPECT_NE(dd1, dd2);
-    }
-
-    {
-        DynamicData dd1(primitive_type<uint64_t>());
-        DynamicData dd2(primitive_type<uint64_t>());
-        dd1.value(uint64_t(15));
-        dd2.value(uint64_t(15));
-        EXPECT_EQ(dd1, dd2);
-        dd2.value(uint64_t(16));
-        EXPECT_NE(dd1, dd2);
-    }
-
-    {
-        DynamicData dd1(primitive_type<int64_t>());
-        DynamicData dd2(primitive_type<int64_t>());
-        dd1.value(int64_t(15));
-        dd2.value(int64_t(15));
-        EXPECT_EQ(dd1, dd2);
-        dd2.value(int64_t(16));
-        EXPECT_NE(dd1, dd2);
-    }
-
-    {
-        DynamicData dd1(primitive_type<float>());
-        DynamicData dd2(primitive_type<float>());
-        dd1.value(float(15.1));
-        dd2.value(float(15.1));
-        EXPECT_EQ(dd1, dd2);
-        dd2.value(float(16.3));
-        EXPECT_NE(dd1, dd2);
-    }
-
-    {
-        DynamicData dd1(primitive_type<double>());
-        DynamicData dd2(primitive_type<double>());
-        dd1.value(double(15.1));
-        dd2.value(double(15.1));
-        EXPECT_EQ(dd1, dd2);
-        dd2.value(double(16.3));
-        EXPECT_NE(dd1, dd2);
-    }
-
-    {
-        DynamicData dd1(primitive_type<long double>());
-        DynamicData dd2(primitive_type<long double>());
-        long double d1 = 15.1;
-        dd1.value(d1);
-        dd2.value(d1);
-        EXPECT_EQ(dd1, dd2);
-        d1 = 16.3;
-        dd2.value(d1);
-        EXPECT_NE(dd1, dd2);
-    }
-
-    {
-        DynamicData dd1(primitive_type<char>());
-        DynamicData dd2(primitive_type<char>());
-        dd1.value('d');
-        dd2.value('d');
-        EXPECT_EQ(dd1, dd2);
-        dd2.value('f');
-        EXPECT_NE(dd1, dd2);
-    }
-
-    {
-        DynamicData dd1(primitive_type<wchar_t>());
-        DynamicData dd2(primitive_type<wchar_t>());
-        dd1.value(char16_t(RAND_MAX));
-        dd2.value(char16_t(RAND_MAX));
-        EXPECT_EQ(dd1, dd2);
-        dd2.value(char16_t(RAND_MAX - 1));
-        EXPECT_NE(dd1, dd2);
-    }
-    
-    {
-        DynamicData dd1(primitive_type<double>());
-        DynamicData dd2(primitive_type<long double>());
-        long double d1 = 15.1;
-        dd1.value<double>(15.1);
-        dd2.value(d1);
-        EXPECT_EQ(dd1, dd2);
-        d1 = 16.3;
-        dd2.value(d1);
-        EXPECT_NE(dd1, dd2);
-    }
-
-    {
-        DynamicData dd1(primitive_type<long double>());
-        DynamicData dd2(primitive_type<uint32_t>());
-        long double d1 = 15;
-        dd1.value(d1);
-        dd2.value<uint32_t>(15);
-        EXPECT_EQ(dd1, dd2);
-        d1 = 16.3;
-        dd1.value(d1);
-        EXPECT_NE(dd1, dd2);
-    }
-
+    singleCheck<uint8_t, uint8_t>() ;
+    singleCheck<uint16_t, uint16_t>() ;
+    singleCheck<int16_t, int16_t>() ;
+    singleCheck<uint32_t, uint32_t>() ;
+    singleCheck<int32_t, int32_t>() ;
+    singleCheck<uint64_t, uint64_t>() ;
+    singleCheck<int64_t, int64_t>() ;
+    singleCheck<float, float>() ;
+    singleCheck<double, double>() ;
+    singleCheck<char, char>() ;
+    singleCheck<wchar_t, wchar_t>() ;
+    singleCheck<double, long double>() ;
+    singleCheck<int16_t, uint32_t>() ;
+    singleCheck<double, uint8_t>() ;
+//    singleCheck<double, uint16_t>() ;
 }
 
 TEST (DynamicData, testing_equality_check_string)
