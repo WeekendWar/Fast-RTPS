@@ -25,7 +25,7 @@ if(GTEST_FOUND)
     include_directories(${ASIO_INCLUDE_DIR})
 
     include_directories(${PROJECT_SOURCE_DIR}/include)
-                set(SOURCE ${PROJECT_SOURCE_DIR}/include/dds/core/xtypes/*.hpp)
+    set(SOURCE ${PROJECT_SOURCE_DIR}/include/dds/core/xtypes/*.hpp)
 
     set(XTYPES_TESTS_SOURCE myTest.cpp)
 
@@ -33,6 +33,6 @@ if(GTEST_FOUND)
 
     target_link_libraries(myTest ${GTEST_LIBRARIES})
 
-#	add_xtypes_gtest(myTest SOURCES ${XTYPES_TESTS_SOURCE})
+#   add_xtypes_gtest(myTest SOURCES ${XTYPES_TESTS_SOURCE})
 
 endif()
