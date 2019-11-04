@@ -339,14 +339,6 @@ DynamicData cdd(StructType &st)
     return dd;
 }
 
-TEST (DynamicData, cp_type)
-{
-    StructType st("st");
-    DynamicData dd = cdd(st);
-    cout << dd["struct"]["sequence"][7].string() << endl;
-}
-
-
 DynamicData ret_dyn_data(StructType &st, int i )
 {
     switch(i){
@@ -541,7 +533,6 @@ TEST (DynamicType, testing_is_compatible_string_same_bound)
 {
     srand48(time(0));
     size_t b = lrand48()%1000;
-    cout << "the_bound: " << b << endl;
     StringType s(b);
     StringType r(b);
     
@@ -568,7 +559,6 @@ TEST (DynamicType, testing_is_compatible_structure_of_string)
     StructType s("other_check");
     s.add_member(Member("string", st));
 
-    cout << "types: " << uint32_t(r.is_compatible(s)) << "  " << uint32_t(s.is_compatible(r)) << endl ; 
     EXPECT_EQ(TypeConsistency::EQUALS , r.is_compatible(s) );
     EXPECT_EQ(TypeConsistency::EQUALS , s.is_compatible(r) );
 }
@@ -869,7 +859,6 @@ TEST (DynamicData, testing_equality_check_string)
     EXPECT_NE(d1, d2);
     d2[0].value<uint64_t>(3456);
     d2.push<uint64_t>(435);
-    cout << "d2: " << d2[1].value<uint64_t>() << endl;
     EXPECT_NE(d1, d2);
 }
 
@@ -932,10 +921,6 @@ TEST (DynamicData, test_equality_complex_struct)
     vector<uint32_t> t = d1["array"].as_vector<uint32_t>();
     vector<uint32_t> s = d1["sequence"].as_vector<uint32_t>();
     
-    cout << v << endl;
-    cout << vv << endl;
-    cout << t << endl;
-    cout << s << endl;
 
 }
 
@@ -976,20 +961,8 @@ TEST (QoS, sequence)
     }
     d[9].value<uint16_t>(256);
     
-    cout << "primo: " << endl ;
-    for(int i = 0 ; i < 10 ; ++i)
-    {
-        cout << '(' << d[i].value<uint16_t>() <<')';
-    }
-    cout << endl ;
     DynamicData dd(d, s2) ;
 
-    cout << "secondo: " << endl ;
-    for(int i = 0 ; i < 10 ; ++i)
-    {
-        cout << '(' << dd[i].value<uint16_t>() << ')' ; 
-    }
-    cout << endl;
     EXPECT_EQ(10, dd.size()) ;
 }
 
@@ -1006,20 +979,8 @@ TEST (QoS, other_sequence)
     }
     d[9].value<uint16_t>(256);
     
-    cout << "primo: " << endl ;
-    for(int i = 0 ; i < 20 ; ++i)
-    {
-        cout << '(' << d[i].value<uint16_t>() << ')'; 
-    }
-    cout << endl;
     DynamicData dd(d, s2) ;
 
-    cout << "secondo: " << endl ;
-    for(size_t i = 0 ; i < dd.size() ; ++i)
-    {
-        cout << '(' << dd[i].value<uint16_t>() << ')';
-    }
-    cout << endl; 
     EXPECT_EQ(10, dd.size()) ;
 }
 
@@ -1090,17 +1051,7 @@ TEST (QoS, array)
     
     DynamicData d(a);
     d[8].value(10) ;
-    for(size_t i = 0 ; i < 10 ; ++i)
-    {
-        cout << '(' << d[i].value<uint16_t>() << ')';
-    }
-    cout << '\n';
     DynamicData e(d,b);
-    for(size_t i = 0 ; i < e.size() ; ++i)
-    {
-        cout << '(' << e[i].value<uint16_t>() << ')'; 
-    }
-    cout << '\n';
     EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS, b.is_compatible(a)) ;
 }
 
@@ -1112,17 +1063,7 @@ TEST (QoS, other_array)
     DynamicData d(a);
     d[8].value(10) ;
     d[13].value(10) ;
-    for(size_t i = 0 ; i < d.size() ; ++i)
-    {
-        cout << '(' << d[i].value<uint16_t>() << ')';
-    }
-    cout << '\n';
     DynamicData e(d,b);
-    for(size_t i = 0 ; i < e.size() ; ++i)
-    {
-        cout << '(' << e[i].value<uint16_t>() << ')'; 
-    }
-    cout << '\n';
     EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS, b.is_compatible(a)) ;
 }
 
@@ -1136,7 +1077,6 @@ TEST (QoS, Array_qos)
               TypeConsistency::IGNORE_TYPE_WIDTH |
               TypeConsistency::IGNORE_TYPE_SIGN , a_arr.is_compatible(b_arr));
     
-    cout << (bitset<16>(uint16_t(a_arr.is_compatible(b_arr)))) << endl ;
 }
 
 TEST (QoS, mixed_types)
