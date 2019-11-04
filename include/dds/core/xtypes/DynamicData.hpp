@@ -190,6 +190,28 @@ public:
         return *this;
     }
 
+    template<typename T, class = PrimitiveOrString<T>>
+    WritableDynamicDataRef& operator = (
+            const T& other)
+    {
+        value(other);
+        return *this;
+    }
+
+    WritableDynamicDataRef& operator = (
+            const std::string& other)
+    {
+        string(other);
+        return *this;
+    }
+
+    WritableDynamicDataRef& operator = (
+            const std::wstring& other)
+    {
+        wstring(other);
+        return *this;
+    }
+
     ReadableDynamicDataRef cref() const { return ReadableDynamicDataRef(*this); }
 
     template<typename T, class = PrimitiveOrString<T>>
@@ -276,6 +298,15 @@ public:
         return *this;
     }
 
+    WritableDynamicDataRef& resize(size_t size) // this = SequenceType
+    {
+        assert(type_.kind() == TypeKind::SEQUENCE_TYPE);
+        const SequenceType& sequence = static_cast<const SequenceType&>(type_);
+
+        sequence.resize_instance(instance_, size);
+        return *this;
+    }
+
     bool for_each(std::function<void(const ReadableNode& node)> visitor) const
     {
         return ReadableDynamicDataRef::for_each(visitor);
@@ -285,17 +316,18 @@ public:
     {
     public:
         WritableNode(const Instanceable::InstanceNode& instance_node) : ReadableNode(instance_node) {}
-        WritableDynamicDataRef data() const { return ReadableNode::data(); }
+        WritableDynamicDataRef data() { return ReadableNode::data(); }
     };
 
-    bool for_each(std::function<void(const WritableNode& node)> visitor)
+    bool for_each(std::function<void(WritableNode& node)> visitor)
     {
         Instanceable::InstanceNode root(type_, instance_);
         try
         {
             type_.for_each_instance(root, [&](const Instanceable::InstanceNode& instance_node)
             {
-                visitor(WritableNode(instance_node));
+                WritableNode node(instance_node);
+                visitor(node);
             });
             return true;
         }
