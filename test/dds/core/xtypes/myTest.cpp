@@ -964,6 +964,11 @@ TEST (QoS, sequence)
     DynamicData dd(d, s2) ;
 
     EXPECT_EQ(10, dd.size()) ;
+    EXPECT_NE(true, dd == d) ;
+    for (size_t i = 0 ; i < d.size() ; ++i)
+    {
+        EXPECT_EQ( d[i].value<uint16_t>() , dd[i].value<uint16_t>() );
+    }
 }
 
 TEST (QoS, other_sequence)
@@ -973,7 +978,7 @@ TEST (QoS, other_sequence)
 
     DynamicData d(s1) ;
 
-    for(int i = 0 ; i < 20 ; ++i)
+    for(size_t i = 0 ; i < 20 ; ++i)
     {
         d.push(uint16_t()) ;
     }
@@ -982,6 +987,11 @@ TEST (QoS, other_sequence)
     DynamicData dd(d, s2) ;
 
     EXPECT_EQ(10, dd.size()) ;
+    EXPECT_NE(true, dd == d) ;
+    for (size_t i = 0 ; i < dd.size() ; ++i)
+    {
+        EXPECT_EQ( d[i].value<uint16_t>() , dd[i].value<uint16_t>() );
+    }
 }
 
 TEST (QoS, string)
@@ -997,6 +1007,11 @@ TEST (QoS, string)
     
     DynamicData e(d,t) ;
     EXPECT_EQ(10, e.size()); //still pending investigation
+    EXPECT_NE(true, e == d) ;
+    for (size_t i = 0 ; i < e.size() ; ++i)
+    {
+        EXPECT_EQ( d[i].value<char>() , e[i].value<char>() );
+    }
 }
 
 TEST (QoS, other_string)
@@ -1012,6 +1027,11 @@ TEST (QoS, other_string)
     
     DynamicData e(d,t) ;
     EXPECT_EQ(10, e.size()); 
+    EXPECT_NE(true, e == d) ;
+    for (size_t i = 0 ; i < d.size() ; ++i)
+    {
+        EXPECT_EQ( d[i].value<char>() , e[i].value<char>() );
+    }
 }
 
 TEST (QoS, wstring)
@@ -1027,6 +1047,11 @@ TEST (QoS, wstring)
     
     DynamicData e(d,t) ;
     EXPECT_EQ(10, e.size()); //still pending investigation
+    EXPECT_NE(true, e == d) ;
+    for (size_t i = 0 ; i < e.size() ; ++i)
+    {
+        EXPECT_EQ( d[i].value<wchar_t>() , e[i].value<wchar_t>() );
+    }
 }
 
 TEST (QoS, other_wstring)
@@ -1042,6 +1067,11 @@ TEST (QoS, other_wstring)
     
     DynamicData e(d,t) ;
     EXPECT_EQ(10, e.size()); 
+    EXPECT_NE(true, e == d) ;
+    for (size_t i = 0 ; i < d.size() ; ++i)
+    {
+        EXPECT_EQ( d[i].value<wchar_t>() , e[i].value<wchar_t>() );
+    }
 }
 
 TEST (QoS, array)
@@ -1053,6 +1083,11 @@ TEST (QoS, array)
     d[8].value(10) ;
     DynamicData e(d,b);
     EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS, b.is_compatible(a)) ;
+    EXPECT_NE(true, e == d) ;
+    for (size_t i = 0 ; i < d.size() ; ++i)
+    {
+        EXPECT_EQ( d[i].value<uint16_t>() , e[i].value<uint16_t>() );
+    }
 }
 
 TEST (QoS, other_array)
@@ -1065,6 +1100,11 @@ TEST (QoS, other_array)
     d[13].value(10) ;
     DynamicData e(d,b);
     EXPECT_EQ(TypeConsistency::IGNORE_ARRAY_BOUNDS, b.is_compatible(a)) ;
+    EXPECT_NE(true, e == d) ;
+    for (size_t i = 0 ; i < e.size() ; ++i)
+    {
+        EXPECT_EQ( d[i].value<uint16_t>() , e[i].value<uint16_t>() );
+    }
 }
 
 TEST (QoS, Array_qos)
